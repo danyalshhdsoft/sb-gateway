@@ -7,15 +7,30 @@ import { AppService } from './app.service';
   imports: [
     ClientsModule.register([
       {
-        name: 'BILLING_SERVICE',
+        name: 'USER_SERVICE',
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'billing',
-            brokers: ['host.docker.internal:9092'],
+            clientId: 'property',
+            //brokers: ['host.docker.internal:9092'],
+            brokers: ['localhost:9092'],
           },
           consumer: {
-            groupId: 'billing-consumer',
+            groupId: 'user-consumer',
+          },
+        },
+      },
+      {
+        name: 'AUTH_SERVICE',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'property',
+            //brokers: ['host.docker.internal:9092'],
+            brokers: ['localhost:9092'],
+          },
+          consumer: {
+            groupId: 'user-consumer',
           },
         },
       },
