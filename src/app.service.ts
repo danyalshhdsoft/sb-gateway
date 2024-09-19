@@ -5,6 +5,7 @@ import { OrderCreatedEvent } from './order-created.event';
 import { LoginDto, RegisterUserDto } from './dto/loginDto';
 import { GetUserRequest } from './dto/requests/get-user-request.dto';
 import { CreateRegistrationRequest } from './dto/requests/create-registration-request';
+import { GetForgotPasswordRequest } from './dto/requests/get-forgot-password-request';
 
 @Injectable()
 export class AppService {
@@ -28,6 +29,13 @@ export class AppService {
   async signIn(login: LoginDto) {
     return await this.authClient
       .send('login', new GetUserRequest(login.email, login.password)).toPromise();
+  }
+
+  async forgotPasswordRequest(email: string) {
+    return await this.authClient
+      .send('forgot-password', new GetForgotPasswordRequest(email))
+      .toPromise()
+      .catch(err => err);
   }
 
   async registerUser(user: RegisterUserDto) {

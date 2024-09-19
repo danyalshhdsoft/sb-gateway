@@ -4,6 +4,7 @@ import { CreateOrderRequest } from './create-order-request.dto';
 import { LoginDto, RegisterUserDto } from './dto/loginDto';
 import { Response } from 'express';
 import { ClientKafka } from '@nestjs/microservices';
+import { ResetPasswordRequestDto } from './dto/auth.dto';
 
 @Controller()
 export class AppController {
@@ -35,8 +36,28 @@ export class AppController {
     return res ? response.status(res?.status).send(res.data) : null;
   }
 
+  @Post('forgot-password')
+  async requestForgotPassword(
+    @Body() resetPasswordDto: ResetPasswordRequestDto,
+  ) {
+    return await this.appService.forgotPasswordRequest(resetPasswordDto.email);
+  }
+
+  // @UseGuards(JwtAuthGuard)
+  // @Post('reset-password')
+  // async ressetPassword(
+  //   @Body() resetPasswordDto: ResetPasswordDto,
+  //   @Req() req: any,
+  // ) {
+  //   return await this.appService.resetPassword(
+  //     resetPasswordDto.password,
+  //     req.user.id,
+  //   );
+  // }
+
   onModuleInit() {
     this.authClient.subscribeToResponseOf('login');
     this.authClient.subscribeToResponseOf('register');
+    this.authClient.subscribeToResponseOf('forgot-password');
   }
 }
