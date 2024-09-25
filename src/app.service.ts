@@ -2,10 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { CreateOrderRequest } from './create-order-request.dto';
 import { OrderCreatedEvent } from './order-created.event';
-import { LoginDto, RegisterUserDto } from './dto/loginDto';
+import { LoginDto, RegisterUserDto, ResetPasswordDto } from './dto/loginDto';
 import { GetUserRequest } from './dto/requests/get-user-request.dto';
 import { CreateRegistrationRequest } from './dto/requests/create-registration-request';
 import { GetForgotPasswordRequest } from './dto/requests/get-forgot-password-request';
+import { Schema } from 'mongoose';
+import { CreateResetPasswordRequest } from './dto/requests/create-reset-password-request';
 
 @Injectable()
 export class AppService {
@@ -19,7 +21,6 @@ export class AppService {
   }
 
   createOrder({ userId, price }: CreateOrderRequest) {
-    console.log("danyal testing in api gateway")
     this.billingClient.emit(
       'order_created',
       new OrderCreatedEvent('123', userId, price),
@@ -28,7 +29,9 @@ export class AppService {
 
   async signIn(login: LoginDto) {
     return await this.authClient
-      .send('login', new GetUserRequest(login.email, login.password)).toPromise();
+      .send('login', new GetUserRequest(login.email, login.password))
+      .toPromise()
+      .catch(err => err);
   }
 
   async forgotPasswordRequest(email: string) {
@@ -54,6 +57,16 @@ export class AppService {
         user.agentDescription,
         user.developerId,
         user.serviceArea,
-      )).toPromise();
+      )).toPromise()
+      .catch(err => err);
+  }
+
+  async resetPassword(password: string, userId: Schema.Types.ObjectId) {
+    return await this.authClient
+      .send('reset-password', new CreateResetPasswordRequest(
+        password,
+        userId,
+      )).toPromise()
+      .catch(err => err);
   }
 }
