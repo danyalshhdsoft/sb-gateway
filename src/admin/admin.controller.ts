@@ -26,7 +26,7 @@ export class AdminController {
     @Post('signin')
     async adminSignin(@Body() adminLoginDto: AdminSigninDto) {
         try {
-            return new ApiResponse(await this.adminService.signIn(adminLoginDto));
+            return await this.adminService.signIn(adminLoginDto);
         } catch (error) {
             if (error instanceof RpcException) {
                 const errResponse = error.getError();
@@ -42,6 +42,7 @@ export class AdminController {
         @Body() adminSigninDto: AdminSignupDto,
         @Res() res: Response,
     ) {
+        console.log('coming here');
         const user = await this.adminService.signup(adminSigninDto);
         return res.status(user.status).send(user.data);
     }

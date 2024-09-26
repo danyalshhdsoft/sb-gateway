@@ -8,6 +8,7 @@ import { CreateRegistrationRequest } from './dto/requests/create-registration-re
 import { GetForgotPasswordRequest } from './dto/requests/get-forgot-password-request';
 import { Schema } from 'mongoose';
 import { CreateResetPasswordRequest } from './dto/requests/create-reset-password-request';
+import { OnboardingVerifyRequest } from './dto/requests/onboarding-verify-request';
 
 @Injectable()
 export class AppService {
@@ -65,6 +66,15 @@ export class AppService {
     return await this.authClient
       .send('reset-password', new CreateResetPasswordRequest(
         password,
+        userId,
+      )).toPromise()
+      .catch(err => err);
+  }
+
+  async verifyEmail(otp: string, userId: Schema.Types.ObjectId) {
+    return await this.authClient
+      .send('onboarding-verify', new OnboardingVerifyRequest(
+        otp,
         userId,
       )).toPromise()
       .catch(err => err);
