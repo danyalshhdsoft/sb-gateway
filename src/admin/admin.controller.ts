@@ -38,8 +38,12 @@ export class AdminController {
     }
 
     @Post('signup')
-    async adminSignup(@Body() adminSigninDto: AdminSignupDto) {
-        return new ApiResponse(await this.adminService.signup(adminSigninDto));
+    async adminSignup(
+        @Body() adminSigninDto: AdminSignupDto,
+        @Res() res: Response,
+    ) {
+        const user = await this.adminService.signup(adminSigninDto);
+        return res.status(user.status).send(user.data);
     }
 
     @Put('role')

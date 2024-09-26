@@ -32,19 +32,19 @@ import {
     password: string;
   
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     profilePicUrl: string;
   
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     phone: string;
   
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     whatsAppPhone: string;
   
     @IsEnum(GENDER)
-    @IsNotEmpty()
+    @IsOptional()
     gender: GENDER;
   
     @IsMongoId()
