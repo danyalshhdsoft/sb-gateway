@@ -47,7 +47,7 @@ export class AdminSigninDto {
 
 export class AdminSignupDto {
   @IsEmail()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'email is required' })
   email: string;
 
   @IsString()

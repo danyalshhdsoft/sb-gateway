@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Inject, NotFoundException, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateOrderRequest } from './create-order-request.dto';
-import { LoginDto, RegisterUserDto } from './dto/loginDto';
+import { LoginDto, RegisterUserDto, VerifyEmailDto } from './dto/loginDto';
 import { Response } from 'express';
-import { ClientKafka } from '@nestjs/microservices';
+import { ClientKafka, RpcException } from '@nestjs/microservices';
 import { ResetPasswordDto, ResetPasswordRequestDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import ApiResponse from './utils/api-response.util';
@@ -13,7 +13,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     @Inject('AUTH_SERVICE') private readonly authClient: ClientKafka,
-  ) {}
+  ) { }
 
   @Get()
   getHello(): string {
@@ -55,6 +55,27 @@ export class AppController {
     return res ? response.status(res?.status).send(res.data) : null;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('onboarding/verify')
+  async verifyEmail(
+    @Body() verifyEmailDto: VerifyEmailDto,
+    @Req() req: any,
+    @Res() response: Response
+  ) {
+    //try {
+      const res: any = await this.appService.verifyEmail(verifyEmailDto.otp, req.user.id);
+      return res ? response.status(res?.status).send(res.data) : null;
+    // }
+    // catch (error) {
+    //   if (error instanceof RpcException) {
+    //     const errResponse = error.getError();
+    //     // Do something with the error (log it, transform it, etc.)
+    //     throw new NotFoundException(errResponse);
+    //   }
+    //   throw new BadRequestException(error.message);
+    // }
+  }
+
   // @UseGuards(JwtAuthGuard)
   // @Post('reset-password')
   // async ressetPassword(
@@ -73,5 +94,6 @@ export class AppController {
     this.authClient.subscribeToResponseOf('forgot-password');
     this.authClient.subscribeToResponseOf('reset-password');
     this.authClient.subscribeToResponseOf('authorize_user');
+    this.authClient.subscribeToResponseOf('onboarding-verify');
   }
 }
