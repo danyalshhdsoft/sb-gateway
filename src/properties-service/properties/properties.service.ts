@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientKafka, RpcException } from '@nestjs/microservices';
+import { CreatePropertyRequest } from 'src/dto/properties/requests/create-properties-request.dto';
 
 @Injectable()
 export class PropertiesService {
@@ -11,10 +12,10 @@ export class PropertiesService {
     return 'Hello World!';
   }
 
-  async addNewProperty(data: any) {
+  async addNewProperty(oPropertyRequest: CreatePropertyRequest) {
     try {
       const responseProperties = this.propertiesClient
-        .send('add_properties', data)
+        .send('add_properties', oPropertyRequest)
         .toPromise();
       return responseProperties;
     } catch (e) {

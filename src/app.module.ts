@@ -11,7 +11,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard, PassportModule } from '@nestjs/passport';
 import { PropertiesController } from './properties-service/properties/properties.controller';
 import { PropertiesService } from './properties-service/properties/properties.service';
-
+import {
+  CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
+  KAFKA_CONSUMER_GROUP_ID,
+  KAFKA_OPTIONS_CLIENT_ID,
+} from './utils/constants/kafka-const';
 @Module({
   imports: [
     PassportModule,
@@ -68,58 +72,16 @@ import { PropertiesService } from './properties-service/properties/properties.se
         },
       },
       {
-        name: 'PROPERTIES_SERVICE',
+        name: CLIENTS_MODULE_KAFKA_NAME_PROPERTY.PROPERTIES_SERVICE,
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'properties-service',
+            clientId: KAFKA_OPTIONS_CLIENT_ID.properties_service,
             //brokers: ['host.docker.internal:9092'],
             brokers: ['localhost:9092'],
           },
           consumer: {
-            groupId: 'properties-consumer',
-          },
-        },
-      },
-      {
-        name: 'PROJECTS_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'projects-service',
-            //brokers: ['host.docker.internal:9092'],
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: 'projects-consumer',
-          },
-        },
-      },
-      {
-        name: 'DEVELOPERS_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'developers-service',
-            //brokers: ['host.docker.internal:9092'],
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: 'developers-consumer',
-          },
-        },
-      },
-      {
-        name: 'LOCATIONS_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'locations-service',
-            //brokers: ['host.docker.internal:9092'],
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: 'locations-consumer',
+            groupId: KAFKA_CONSUMER_GROUP_ID.properties_consumer,
           },
         },
       },
