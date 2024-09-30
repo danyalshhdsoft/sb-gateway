@@ -26,3 +26,11 @@ export const KAFKA_PROPERTIES_TOPIC = {
   delete_properties: 'delete_properties',
   update_property_status: 'update_property_status',
 };
+
+export const KAFKA_LOCATIONS_TOPIC = {
+  locations_autocomplete: 'locations_autocomplete',
+  restricted_location_auto_complete: 'restricted_location_auto_complete',
+  retrieve_locations: 'retrieve_locations',
+  locations_details: 'locations_details',
+  locations_geocode: 'locations_geocode',
+};

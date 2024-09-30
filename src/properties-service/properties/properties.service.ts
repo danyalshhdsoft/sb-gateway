@@ -1,11 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientKafka, RpcException } from '@nestjs/microservices';
-import { KAFKA_PROPERTIES_TOPIC } from 'src/utils/constants/kafka-const';
+import {
+  CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
+  KAFKA_PROPERTIES_TOPIC,
+} from 'src/utils/constants/kafka-const';
 
 @Injectable()
 export class PropertiesService {
   constructor(
-    @Inject('PROPERTIES_SERVICE') private propertiesClient: ClientKafka,
+    @Inject(CLIENTS_MODULE_KAFKA_NAME_PROPERTY.PROPERTIES_SERVICE)
+    private propertiesClient: ClientKafka,
   ) {}
 
   getHello(): string {

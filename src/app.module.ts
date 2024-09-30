@@ -16,6 +16,8 @@ import {
   KAFKA_CONSUMER_GROUP_ID,
   KAFKA_OPTIONS_CLIENT_ID,
 } from './utils/constants/kafka-const';
+import { LocationsController } from './properties-service/locations/locations.controller';
+import { LocationService } from './properties-service/locations/locations.service';
 @Module({
   imports: [
     PassportModule,
@@ -87,13 +89,19 @@ import {
       },
     ]),
   ],
-  controllers: [AppController, AdminController, PropertiesController],
+  controllers: [
+    AppController,
+    AdminController,
+    PropertiesController,
+    LocationsController,
+  ],
   providers: [
     AppService,
     AdminService,
     JwtStrategy,
     ConfigService,
     PropertiesService,
+    LocationService,
   ],
   exports: [JwtModule],
 })
