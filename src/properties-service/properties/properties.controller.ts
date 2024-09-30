@@ -11,7 +11,6 @@ import {
   Res,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
-import ApiResponse from 'src/utils/api-response.util';
 
 import { ClientKafka } from '@nestjs/microservices';
 import {
@@ -37,7 +36,11 @@ export class PropertiesController implements OnModuleInit {
       const result = await this.propertiesService.addNewProperty(
         propertyRequests,
       );
-      return res.status(result.status).send(result.data);
+      const data = {
+        message: result.message,
+        data: result.data,
+      };
+      return res.status(result.status).send(data);
     } catch (oError) {
       throw new Error(oError);
     }
@@ -47,24 +50,54 @@ export class PropertiesController implements OnModuleInit {
   async updatePropertyByAdmin(
     @Param('id') id: string,
     @Body() propertyRequests: any,
+    @Res() res: Response,
   ) {
     const result = await this.propertiesService.updateProperty(
       id,
       propertyRequests,
     );
-    return new ApiResponse(result);
+    const data = {
+      message: result.message,
+      data: result.data,
+    };
+    return res.status(result.status).send(data);
   }
 
   @Get()
-  async getAllPropertyLists() {
+  async getAllPropertyLists(@Res() res: Response) {
     const result = await this.propertiesService.getAllPropertyLists();
-    return new ApiResponse(result);
+    const data = {
+      message: result.message,
+      data: result.data,
+    };
+    return res.status(result.status).send(data);
   }
 
   @Delete(':id')
-  async deletePropertyFromList(@Param('id') id: string) {
+  async deletePropertyFromList(@Param('id') id: string, @Res() res: Response) {
     const result = await this.propertiesService.deletePropertyFromList(id);
-    return new ApiResponse(result);
+    const data = {
+      message: result.message,
+      data: result.data,
+    };
+    return res.status(result.status).send(data);
+  }
+
+  @Put('update-property-status/:id')
+  async PropertyStatusUpdate(
+    @Param('id') id: string,
+    @Body() propertyRequests: any,
+    @Res() res: Response,
+  ) {
+    const result = await this.propertiesService.PropertyStatusUpdate(
+      id,
+      propertyRequests,
+    );
+    const data = {
+      message: result.message,
+      data: result.data,
+    };
+    return res.status(result.status).send(data);
   }
 
   onModuleInit() {
@@ -79,6 +112,9 @@ export class PropertiesController implements OnModuleInit {
     );
     this.propertiesClient.subscribeToResponseOf(
       KAFKA_PROPERTIES_TOPIC.delete_properties,
+    );
+    this.propertiesClient.subscribeToResponseOf(
+      KAFKA_PROPERTIES_TOPIC.update_property_status,
     );
   }
 }

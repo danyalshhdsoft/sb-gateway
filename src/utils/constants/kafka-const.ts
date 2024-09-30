@@ -24,4 +24,5 @@ export const KAFKA_PROPERTIES_TOPIC = {
   update_properties: 'update_properties',
   retrieve_properties: 'retrieve_properties',
   delete_properties: 'delete_properties',
+  update_property_status: 'update_property_status',
 };

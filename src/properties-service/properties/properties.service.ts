@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientKafka, RpcException } from '@nestjs/microservices';
 import { CreatePropertyRequest } from 'src/dto/properties/requests/create-properties-request.dto';
+import { KAFKA_PROPERTIES_TOPIC } from 'src/utils/constants/kafka-const';
 
 @Injectable()
 export class PropertiesService {
@@ -15,7 +16,7 @@ export class PropertiesService {
   async addNewProperty(oPropertyRequest: CreatePropertyRequest) {
     try {
       const responseProperties = this.propertiesClient
-        .send('add_properties', oPropertyRequest)
+        .send(KAFKA_PROPERTIES_TOPIC.add_properties, oPropertyRequest)
         .toPromise();
       return responseProperties;
     } catch (e) {
@@ -30,7 +31,7 @@ export class PropertiesService {
         data: data,
       };
       const responseProperties = this.propertiesClient
-        .send('update_properties', oUpdateProperty)
+        .send(KAFKA_PROPERTIES_TOPIC.update_properties, oUpdateProperty)
         .toPromise();
       return responseProperties;
     } catch (e) {
@@ -41,7 +42,7 @@ export class PropertiesService {
   async getAllPropertyLists() {
     try {
       const responseProperties = this.propertiesClient
-        .send('retrieve_properties', {})
+        .send(KAFKA_PROPERTIES_TOPIC.retrieve_properties, {})
         .toPromise();
       return responseProperties;
     } catch (e) {
@@ -52,7 +53,22 @@ export class PropertiesService {
   async deletePropertyFromList(id: string) {
     try {
       const responseProperties = this.propertiesClient
-        .send('delete_properties', id)
+        .send(KAFKA_PROPERTIES_TOPIC.delete_properties, id)
+        .toPromise();
+      return responseProperties;
+    } catch (e) {
+      throw new RpcException(e);
+    }
+  }
+
+  async PropertyStatusUpdate(id: string, data: any) {
+    try {
+      const oUpdateProperty = {
+        id: id,
+        data: data,
+      };
+      const responseProperties = this.propertiesClient
+        .send(KAFKA_PROPERTIES_TOPIC.update_property_status, oUpdateProperty)
         .toPromise();
       return responseProperties;
     } catch (e) {
