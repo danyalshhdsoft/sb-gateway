@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientKafka, RpcException } from '@nestjs/microservices';
-import { CreatePropertyRequest } from 'src/dto/properties/requests/create-properties-request.dto';
 import { KAFKA_PROPERTIES_TOPIC } from 'src/utils/constants/kafka-const';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class PropertiesService {
     return 'Hello World!';
   }
 
-  async addNewProperty(oPropertyRequest: CreatePropertyRequest) {
+  async addNewProperty(oPropertyRequest: any) {
     try {
       const responseProperties = this.propertiesClient
         .send(KAFKA_PROPERTIES_TOPIC.add_properties, oPropertyRequest)
