@@ -20,6 +20,8 @@ import { LocationsController } from './properties-service/locations/locations.co
 import { LocationService } from './properties-service/locations/locations.service';
 import { ProjectsController } from './properties-service/projects/projects.controller';
 import { ProjectsService } from './properties-service/projects/projects.service';
+import { DevelopersController } from './properties-service/developers/developers.controller';
+import { DevelopersService } from './properties-service/developers/developers.service';
 @Module({
   imports: [
     PassportModule,
@@ -97,6 +99,7 @@ import { ProjectsService } from './properties-service/projects/projects.service'
     PropertiesController,
     LocationsController,
     ProjectsController,
+    DevelopersController,
   ],
   providers: [
     AppService,
@@ -106,6 +109,7 @@ import { ProjectsService } from './properties-service/projects/projects.service'
     PropertiesService,
     LocationService,
     ProjectsService,
+    DevelopersService,
   ],
   exports: [JwtModule],
 })

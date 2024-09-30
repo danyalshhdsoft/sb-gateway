@@ -41,3 +41,10 @@ export const KAFKA_PROJECTS_TOPIC = {
   retrieve_projects: 'retrieve_projects',
   delete_project: 'delete_project',
 };
+
+export const KAFKA_DEVELOPERS_TOPIC = {
+  add_developer: 'add_developer',
+  update_developer: 'update_developer',
+  retrieve_developers: 'retrieve_developers',
+  delete_developer: 'delete_developer',
+};
