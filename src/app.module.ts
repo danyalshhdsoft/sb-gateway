@@ -18,6 +18,8 @@ import {
 } from './utils/constants/kafka-const';
 import { LocationsController } from './properties-service/locations/locations.controller';
 import { LocationService } from './properties-service/locations/locations.service';
+import { ProjectsController } from './properties-service/projects/projects.controller';
+import { ProjectsService } from './properties-service/projects/projects.service';
 @Module({
   imports: [
     PassportModule,
@@ -94,6 +96,7 @@ import { LocationService } from './properties-service/locations/locations.servic
     AdminController,
     PropertiesController,
     LocationsController,
+    ProjectsController,
   ],
   providers: [
     AppService,
@@ -102,6 +105,7 @@ import { LocationService } from './properties-service/locations/locations.servic
     ConfigService,
     PropertiesService,
     LocationService,
+    ProjectsService,
   ],
   exports: [JwtModule],
 })

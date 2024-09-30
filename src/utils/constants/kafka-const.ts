@@ -34,3 +34,10 @@ export const KAFKA_LOCATIONS_TOPIC = {
   locations_details: 'locations_details',
   locations_geocode: 'locations_geocode',
 };
+
+export const KAFKA_PROJECTS_TOPIC = {
+  add_project: 'add_project',
+  update_project: 'update_project',
+  retrieve_projects: 'retrieve_projects',
+  delete_project: 'delete_project',
+};
