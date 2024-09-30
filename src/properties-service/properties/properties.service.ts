@@ -54,14 +54,10 @@ export class PropertiesService {
   }
 
   async deletePropertyFromList(id: string) {
-    try {
-      const responseProperties = this.propertiesClient
-        .send(KAFKA_PROPERTIES_TOPIC.delete_properties, id)
-        .toPromise();
-      return responseProperties;
-    } catch (e) {
-      throw new RpcException(e);
-    }
+    const responseProperties = this.propertiesClient
+      .send(KAFKA_PROPERTIES_TOPIC.delete_properties, id)
+      .toPromise();
+    return responseProperties;
   }
 
   async PropertyStatusUpdate(id: string, data: any) {

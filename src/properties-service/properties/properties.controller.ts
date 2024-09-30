@@ -75,12 +75,18 @@ export class PropertiesController implements OnModuleInit {
 
   @Delete(':id')
   async deletePropertyFromList(@Param('id') id: string, @Res() res: Response) {
-    const result = await this.propertiesService.deletePropertyFromList(id);
-    const data = {
-      message: result.message,
-      data: result.data,
-    };
-    return res.status(result.status).send(data);
+    try {
+      const result = await this.propertiesService.deletePropertyFromList(id);
+      const data = {
+        message: result.message,
+        data: result.data,
+      };
+      return res.status(result.status).send(data);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Failed to delete property', error: error.message });
+    }
   }
 
   @Put('update-property-status/:id')
