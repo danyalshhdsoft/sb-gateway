@@ -11,7 +11,19 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard, PassportModule } from '@nestjs/passport';
 import { AdminJwtStrategy } from './auth/strategies/admin-jwt.strategy';
 import { SERVICE_TYPES } from './enums/service-types.enum';
-
+import { PropertiesController } from './properties-service/properties/properties.controller';
+import { PropertiesService } from './properties-service/properties/properties.service';
+import {
+  CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
+  KAFKA_CONSUMER_GROUP_ID,
+  KAFKA_OPTIONS_CLIENT_ID,
+} from './utils/constants/kafka-const';
+import { LocationsController } from './properties-service/locations/locations.controller';
+import { LocationService } from './properties-service/locations/locations.service';
+import { ProjectsController } from './properties-service/projects/projects.controller';
+import { ProjectsService } from './properties-service/projects/projects.service';
+import { DevelopersController } from './properties-service/developers/developers.controller';
+import { DevelopersService } from './properties-service/developers/developers.service';
 @Module({
   imports: [
     PassportModule,
@@ -67,10 +79,40 @@ import { SERVICE_TYPES } from './enums/service-types.enum';
           },
         },
       },
+      {
+        name: CLIENTS_MODULE_KAFKA_NAME_PROPERTY.PROPERTIES_SERVICE,
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: KAFKA_OPTIONS_CLIENT_ID.properties_service,
+            //brokers: ['host.docker.internal:9092'],
+            brokers: ['localhost:9092'],
+          },
+          consumer: {
+            groupId: KAFKA_CONSUMER_GROUP_ID.properties_consumer,
+          },
+        },
+      },
     ]),
   ],
-  controllers: [AppController, AdminController],
-  providers: [AppService, AdminService, JwtStrategy, AdminJwtStrategy, ConfigService],
-  exports: [JwtModule]
+  controllers: [
+    AppController,
+    AdminController,
+    PropertiesController,
+    LocationsController,
+    ProjectsController,
+    DevelopersController,
+  ],
+  providers: [
+    AppService,
+    AdminService,
+    JwtStrategy, AdminJwtStrategy,
+    ConfigService,
+    PropertiesService,
+    LocationService,
+    ProjectsService,
+    DevelopersService,
+  ],
+  exports: [JwtModule],
 })
 export class AppModule {}
