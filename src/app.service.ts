@@ -11,6 +11,7 @@ import { CreateResetPasswordRequest } from './dto/requests/create-reset-password
 import { OnboardingVerifyRequest } from './dto/requests/onboarding-verify-request';
 import { EVENT_TOPICS } from './enums/event-topics.enum';
 import { SERVICE_TYPES } from './enums/service-types.enum';
+import { GetUserDetailsRequest } from './dto/requests/get-user-details-request';
 
 @Injectable()
 export class AppService {
@@ -77,6 +78,14 @@ export class AppService {
     return await this.authClient
       .send(EVENT_TOPICS.ONBOARDING_VERIFY, new OnboardingVerifyRequest(
         otp,
+        userId,
+      )).toPromise()
+      .catch(err => err);
+  }
+
+  async getUser(userId: Schema.Types.ObjectId) {
+    return await this.authClient
+      .send(EVENT_TOPICS.GET_USER_DETAILS, new GetUserDetailsRequest(
         userId,
       )).toPromise()
       .catch(err => err);

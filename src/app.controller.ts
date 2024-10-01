@@ -19,6 +19,16 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('user')
+  async getUser(
+    @Req() req: any,
+    @Res() response: Response
+  ) {
+    const user: any = await this.appService.getUser(req.user.id);
+    return response.send(user);
+  }
+
   @Post('signin')
   async signIn(@Body() loginDto: LoginDto, @Res() response: Response) {
     const res: any = await this.appService.signIn(loginDto);
@@ -62,8 +72,8 @@ export class AppController {
     @Res() response: Response
   ) {
     //try {
-      const res: any = await this.appService.verifyEmail(verifyEmailDto.otp, req.user.id);
-      return res ? response.status(res?.status).send(res.data) : null;
+    const res: any = await this.appService.verifyEmail(verifyEmailDto.otp, req.user.id);
+    return res ? response.status(res?.status).send(res.data) : null;
     // }
     // catch (error) {
     //   if (error instanceof RpcException) {
@@ -94,5 +104,6 @@ export class AppController {
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.RESET_PASSWORD);
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.AUTHORIZE_USER);
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.ONBOARDING_VERIFY);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.GET_USER_DETAILS);
   }
 }
