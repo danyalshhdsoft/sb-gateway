@@ -1,12 +1,11 @@
-import { BadRequestException, Body, Controller, Get, Inject, NotFoundException, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { CreateOrderRequest } from './create-order-request.dto';
 import { LoginDto, RegisterUserDto, VerifyEmailDto } from './dto/loginDto';
 import { Response } from 'express';
-import { ClientKafka, RpcException } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { ResetPasswordDto, ResetPasswordRequestDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import ApiResponse from './utils/api-response.util';
+import { EVENT_TOPICS } from './enums/event-topics.enum';
 
 @Controller()
 export class AppController {
@@ -89,11 +88,11 @@ export class AppController {
   // }
 
   onModuleInit() {
-    this.authClient.subscribeToResponseOf('login');
-    this.authClient.subscribeToResponseOf('register');
-    this.authClient.subscribeToResponseOf('forgot-password');
-    this.authClient.subscribeToResponseOf('reset-password');
-    this.authClient.subscribeToResponseOf('authorize_user');
-    this.authClient.subscribeToResponseOf('onboarding-verify');
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.LOGIN);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.REGISTER);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.FORGOT_PASSWORD);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.RESET_PASSWORD);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.AUTHORIZE_USER);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.ONBOARDING_VERIFY);
   }
 }

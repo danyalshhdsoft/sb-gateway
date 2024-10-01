@@ -9,6 +9,8 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard, PassportModule } from '@nestjs/passport';
+import { AdminJwtStrategy } from './auth/strategies/admin-jwt.strategy';
+import { SERVICE_TYPES } from './enums/service-types.enum';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { AuthGuard, PassportModule } from '@nestjs/passport';
     }),
     ClientsModule.register([
       {
-        name: 'USER_SERVICE',
+        name: SERVICE_TYPES.USER_SERVICE,
         transport: Transport.KAFKA,
         options: {
           client: {
@@ -38,7 +40,7 @@ import { AuthGuard, PassportModule } from '@nestjs/passport';
         },
       },
       {
-        name: 'AUTH_SERVICE',
+        name: SERVICE_TYPES.AUTH_SERVICE,
         transport: Transport.KAFKA,
         options: {
           client: {
@@ -52,7 +54,7 @@ import { AuthGuard, PassportModule } from '@nestjs/passport';
         },
       },
       {
-        name: 'ADMIN_SERVICE',
+        name: SERVICE_TYPES.ADMIN_SERVICE,
         transport: Transport.KAFKA,
         options: {
           client: {
@@ -68,7 +70,7 @@ import { AuthGuard, PassportModule } from '@nestjs/passport';
     ]),
   ],
   controllers: [AppController, AdminController],
-  providers: [AppService, AdminService, JwtStrategy, ConfigService],
+  providers: [AppService, AdminService, JwtStrategy, AdminJwtStrategy, ConfigService],
   exports: [JwtModule]
 })
 export class AppModule {}

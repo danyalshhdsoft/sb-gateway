@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Put, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 // import { AppService } from './app.service';
 // import { CreateOrderRequest } from './create-order-request.dto';
 // import { LoginDto, RegisterUserDto } from './dto/loginDto';
@@ -10,6 +10,8 @@ import { AdminService } from './admin.service';
 import { IsIdDTO } from 'src/dto/admin/id.dto';
 import { UpdateRoleDto } from 'src/dto/admin/update.role.dto';
 import { CreateRoleDto } from 'src/dto/admin/create-role.dto';
+import { AdminJwtAuthGuard } from 'src/auth/guards/admin-jwt-auth.guard';
+import { EVENT_TOPICS } from 'src/enums/event-topics.enum';
 
 @Controller('admin')
 export class AdminController {
@@ -24,9 +26,13 @@ export class AdminController {
     }
 
     @Post('signin')
-    async adminSignin(@Body() adminLoginDto: AdminSigninDto) {
-        try {
-            return await this.adminService.signIn(adminLoginDto);
+    async adminSignin(
+        @Body() adminLoginDto: AdminSigninDto,
+        @Res() response: Response,
+    ) {
+       try {
+            const res: any = await this.adminService.signIn(adminLoginDto);
+            return res ? response.status(res?.status).send(res.data) : null;
         } catch (error) {
             if (error instanceof RpcException) {
                 const errResponse = error.getError();
@@ -47,25 +53,31 @@ export class AdminController {
         return res.status(user.status).send(user.data);
     }
 
+    @UseGuards(AdminJwtAuthGuard)
     @Put('role')
     async updateRole(
       @Query() isIdDTO: IsIdDTO,
       @Body() updateRole: UpdateRoleDto,
+      @Res() res: Response
     ) {
       const role = await this.adminService.updateRole(isIdDTO, updateRole);
-      return new ApiResponse(role, 'Role updated successfully!');
+      return role ? res.sendStatus(role.status).send(role.data) : null;
     }
-    
+
+    @UseGuards(AdminJwtAuthGuard)
     @Post('role')
     async createRole(@Body() createRoleDTO: CreateRoleDto) {
       const role = await this.adminService.createRole(createRoleDTO.name, createRoleDTO.permissions);
       return new ApiResponse(role, 'Role created successfully!');
     }
   
-    // @Get('role')
-    // async getRoles() {
-    //   return this.adminService.getRoles();
-    // }
+    @Get('role')
+    async getRoles(
+        @Query('page') page: string,
+        @Query('limit') limit: string,
+    ) {
+      return this.adminService.getRoles(page, limit);
+    }
 
     //   @Post('forgot-password/request')
     //   async forgotPasswordRequest(@Body()  forogtPasswordRequestDto: ForgotPasswordRequestDto) {
@@ -82,23 +94,11 @@ export class AdminController {
     //     return "created succesfuly";
     //   }
 
-    //   @Post('signin')
-    //   async signIn(@Body() loginDto: LoginDto, @Res() response: Response) {
-    //     const res: any = await this.appService.signIn(loginDto);
-    //     return res ? response.status(res?.status).send(res.data) : null;
-    //   }
-
-    //   @Post('signup')
-    //   async create(@Body() createUserDto: RegisterUserDto, @Res() response: Response) {
-    //     const res: any = await this.appService.registerUser(createUserDto);
-    //     return res ? response.status(res?.status).send(res.data) : null;
-    //   }
-
     onModuleInit() {
-        this.adminClient.subscribeToResponseOf('admin_login');
-        this.adminClient.subscribeToResponseOf('admin_signup');
-        this.adminClient.subscribeToResponseOf('admin_create_role');
-        this.adminClient.subscribeToResponseOf('admin_update_role');
-        this.adminClient.subscribeToResponseOf('admin_get_roles');
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_LOGIN);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_SIGNUP);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_CREATE_ROLE);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_UPDATE_ROLE);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_GET_ROLES);
     }
 }
