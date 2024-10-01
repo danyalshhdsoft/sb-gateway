@@ -8,26 +8,33 @@ import {
 } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import { Request, Response } from 'express';
+// import { MongooseError } from 'mongoose';
 
 @Catch()
-export class AllHttpExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new Logger(AllHttpExceptionsFilter.name);
-
+export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AllExceptionsFilter.name);
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const statusCode = this.getStatusCode(exception);
 
+    // try {
+    //   JSON.parse(exception?.response?.error);
+    // } catch (error) {
+    //   return response
+    //     .status(statusCode)
+    //     .send(exception?.response?.error || exception);
+    // }
+
     const errorResponse = {
-      status: false,
-      message: this.getErrorMessage(exception),
+      status: statusCode,
+      ...this.getErrorMessage(exception, statusCode),
       path: request.url,
       timestamp: new Date().toISOString(),
       data: null,
     };
 
-    this.logger.error(`Error occurred: ${exception.message}`, exception.stack);
     response.status(statusCode).json(errorResponse);
   }
 
@@ -35,24 +42,66 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       return exception.getStatus();
     } else if (exception instanceof ValidationError) {
-      return HttpStatus.BAD_REQUEST; // For validation errors
+      return HttpStatus.BAD_REQUEST; // Custom status code for validation errors
     } else {
-      return HttpStatus.INTERNAL_SERVER_ERROR; // Default to 500
+      return HttpStatus.INTERNAL_SERVER_ERROR;
     }
   }
 
-  private getErrorMessage(exception: unknown): string {
-    if (exception instanceof HttpException) {
+  private getErrorMessage(exception: unknown | any, statusCode: number): any {
+    if (exception instanceof ValidationError) {
+      console.log('ValidationError');
+      return {
+        message: Object.values(exception.value)
+          .map((err: any) => err.message)
+          .join(', '),
+        errors: [],
+      };
+    } else if (exception instanceof HttpException) {
+      console.log('HttpException');
+
       const responseContent: any = exception.getResponse();
-      return typeof responseContent === 'string'
-        ? responseContent
-        : responseContent?.message || 'Internal server error';
-    } else if (exception instanceof ValidationError) {
-      return Object.values(exception.constraints).join(', ');
+
+      let errors = [];
+
+      if (typeof responseContent?.message === 'string') {
+        errors = [responseContent?.message];
+      } else {
+        errors = responseContent?.message
+          ? responseContent?.message.map((item: any) => {
+              return {
+                name: statusCode === 400 ? 'ValidatorError' : 'HttpException',
+                message: item,
+              };
+            })
+          : [exception.message];
+      }
+
+      return {
+        message: errors[0].message || errors[0],
+        errors: errors,
+      };
     } else if (exception instanceof Error) {
-      return exception.message || 'Internal server error';
+      console.log('Error ');
+
+      const errors = [];
+      if (exception['errors']) {
+        for (const key of Object.keys(exception['errors'])) {
+          errors.push(exception['errors'][key]);
+        }
+      }
+      return {
+        message: exception.message,
+        errors: errors,
+      };
     } else {
-      return 'Unknown error occurred';
+      console.log('elase');
+
+      // Handle other exceptions
+      return {
+        message: 'Internal server error',
+        errors: [],
+      };
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ClientKafka, RpcException } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import {
   CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
   KAFKA_PROPERTIES_TOPIC,
@@ -23,7 +23,7 @@ export class PropertiesService {
         .toPromise();
       return responseProperties;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -38,7 +38,7 @@ export class PropertiesService {
         .toPromise();
       return responseProperties;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -49,15 +49,19 @@ export class PropertiesService {
         .toPromise();
       return responseProperties;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
   async deletePropertyFromList(id: string) {
-    const responseProperties = this.propertiesClient
-      .send(KAFKA_PROPERTIES_TOPIC.delete_properties, id)
-      .toPromise();
-    return responseProperties;
+    try {
+      const responseProperties = this.propertiesClient
+        .send(KAFKA_PROPERTIES_TOPIC.delete_properties, id)
+        .toPromise();
+      return responseProperties;
+    } catch (oError) {
+      throw oError;
+    }
   }
 
   async PropertyStatusUpdate(id: string, data: any) {
@@ -71,7 +75,7 @@ export class PropertiesService {
         .toPromise();
       return responseProperties;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 }

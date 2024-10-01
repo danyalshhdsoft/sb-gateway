@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ClientKafka, RpcException } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import {
   CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
   KAFKA_LOCATIONS_TOPIC,
@@ -23,7 +23,7 @@ export class LocationService {
         .toPromise();
       return responseAutoCompleteLocations;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -46,7 +46,7 @@ export class LocationService {
         .toPromise();
       return responseRestrictedAutoComplete;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -57,7 +57,7 @@ export class LocationService {
         .toPromise();
       return responseLocations;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -68,7 +68,7 @@ export class LocationService {
         .toPromise();
       return responsePlaceDetails;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -79,7 +79,7 @@ export class LocationService {
         .toPromise();
       return responseGoeCode;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 }

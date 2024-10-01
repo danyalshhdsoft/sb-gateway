@@ -18,6 +18,7 @@ import {
   KAFKA_PROPERTIES_TOPIC,
 } from 'src/utils/constants/kafka-const';
 import { Response } from 'express';
+import { catchException } from 'src/utils/helper/handle.exceptionh.helper';
 
 @Controller('properties')
 export class PropertiesController implements OnModuleInit {
@@ -42,7 +43,7 @@ export class PropertiesController implements OnModuleInit {
       };
       return res.status(result.status).send(data);
     } catch (oError) {
-      throw new Error(oError);
+      catchException(oError);
     }
   }
 
@@ -52,25 +53,33 @@ export class PropertiesController implements OnModuleInit {
     @Body() propertyRequests: any,
     @Res() res: Response,
   ) {
-    const result = await this.propertiesService.updateProperty(
-      id,
-      propertyRequests,
-    );
-    const data = {
-      message: result.message,
-      data: result.data,
-    };
-    return res.status(result.status).send(data);
+    try {
+      const result = await this.propertiesService.updateProperty(
+        id,
+        propertyRequests,
+      );
+      const data = {
+        message: result.message,
+        data: result.data,
+      };
+      return res.status(result.status).send(data);
+    } catch (oError) {
+      catchException(oError);
+    }
   }
 
   @Get()
   async getAllPropertyLists(@Res() res: Response) {
-    const result = await this.propertiesService.getAllPropertyLists();
-    const data = {
-      message: result.message,
-      data: result.data,
-    };
-    return res.status(result.status).send(data);
+    try {
+      const result = await this.propertiesService.getAllPropertyLists();
+      const data = {
+        message: result.message,
+        data: result.data,
+      };
+      return res.status(result.status).send(data);
+    } catch (oError) {
+      catchException(oError);
+    }
   }
 
   @Delete(':id')
@@ -83,9 +92,7 @@ export class PropertiesController implements OnModuleInit {
       };
       return res.status(result.status).send(data);
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: 'Failed to delete property', error: error.message });
+      catchException(error);
     }
   }
 
@@ -95,15 +102,19 @@ export class PropertiesController implements OnModuleInit {
     @Body() propertyRequests: any,
     @Res() res: Response,
   ) {
-    const result = await this.propertiesService.PropertyStatusUpdate(
-      id,
-      propertyRequests,
-    );
-    const data = {
-      message: result.message,
-      data: result.data,
-    };
-    return res.status(result.status).send(data);
+    try {
+      const result = await this.propertiesService.PropertyStatusUpdate(
+        id,
+        propertyRequests,
+      );
+      const data = {
+        message: result.message,
+        data: result.data,
+      };
+      return res.status(result.status).send(data);
+    } catch (oError) {
+      catchException(oError);
+    }
   }
 
   onModuleInit() {

@@ -14,6 +14,7 @@ import {
   KAFKA_LOCATIONS_TOPIC,
 } from 'src/utils/constants/kafka-const';
 import { Response } from 'express';
+import { catchException } from 'src/utils/helper/handle.exceptionh.helper';
 
 @Controller('locations')
 export class LocationsController implements OnModuleInit {
@@ -34,7 +35,7 @@ export class LocationsController implements OnModuleInit {
       };
       return res.status(response.status).send(data);
     } catch (oError) {
-      throw new Error(oError);
+      catchException(oError);
     }
   }
 
@@ -46,17 +47,21 @@ export class LocationsController implements OnModuleInit {
     @Query('longitude') longitude: number,
     @Res() res: Response,
   ) {
-    const response =
-      await this.locationsService.getLocationRestrictedAutoComplete(
-        input,
-        latitude,
-        longitude,
-      );
-    const data = {
-      message: response.message,
-      data: response.data,
-    };
-    return res.status(response.status).send(data);
+    try {
+      const response =
+        await this.locationsService.getLocationRestrictedAutoComplete(
+          input,
+          latitude,
+          longitude,
+        );
+      const data = {
+        message: response.message,
+        data: response.data,
+      };
+      return res.status(response.status).send(data);
+    } catch (oError) {
+      catchException(oError);
+    }
   }
 
   @Get()
@@ -69,7 +74,7 @@ export class LocationsController implements OnModuleInit {
       };
       return res.status(response.status).send(data);
     } catch (oError) {
-      throw new Error(oError);
+      catchException(oError);
     }
   }
 
@@ -79,28 +84,36 @@ export class LocationsController implements OnModuleInit {
     @Query('placeId') placeId: string,
     @Res() res: Response,
   ) {
-    const response = await this.locationsService.getPlaceDetails(placeId);
+    try {
+      const response = await this.locationsService.getPlaceDetails(placeId);
 
-    // Optional: Enrich with developer/project details from external data
-    // const additionalDetails = await this.LocationsService.getDeveloperDetails(
-    //   placeDetails.address,
-    // );
-    const data = {
-      message: response.message,
-      data: response.data,
-    };
-    return res.status(response.status).send(data);
+      // Optional: Enrich with developer/project details from external data
+      // const additionalDetails = await this.LocationsService.getDeveloperDetails(
+      //   placeDetails.address,
+      // );
+      const data = {
+        message: response.message,
+        data: response.data,
+      };
+      return res.status(response.status).send(data);
+    } catch (oError) {
+      catchException(oError);
+    }
   }
 
   // Endpoint for autocomplete search box
   @Get('geocode')
   async getGeocode(@Query('input') input: string, @Res() res: Response) {
-    const response = await this.locationsService.getGeocodeResponse(input);
-    const data = {
-      message: response.message,
-      data: response.data,
-    };
-    return res.status(response.status).send(data);
+    try {
+      const response = await this.locationsService.getGeocodeResponse(input);
+      const data = {
+        message: response.message,
+        data: response.data,
+      };
+      return res.status(response.status).send(data);
+    } catch (oError) {
+      catchException(oError);
+    }
   }
 
   onModuleInit() {

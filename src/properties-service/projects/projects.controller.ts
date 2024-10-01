@@ -18,6 +18,7 @@ import {
   KAFKA_PROJECTS_TOPIC,
 } from 'src/utils/constants/kafka-const';
 import { Response } from 'express';
+import { catchException } from 'src/utils/helper/handle.exceptionh.helper';
 
 @Controller('projects')
 export class ProjectsController implements OnModuleInit {
@@ -42,7 +43,7 @@ export class ProjectsController implements OnModuleInit {
       };
       return res.status(response.status).send(data);
     } catch (oError) {
-      throw new Error(oError);
+      catchException(oError);
     }
   }
 
@@ -63,7 +64,7 @@ export class ProjectsController implements OnModuleInit {
       };
       return res.status(response.status).send(data);
     } catch (oError) {
-      throw new Error(oError);
+      catchException(oError);
     }
   }
 
@@ -77,7 +78,7 @@ export class ProjectsController implements OnModuleInit {
       };
       return res.status(response.status).send(data);
     } catch (oError) {
-      throw new Error(oError);
+      catchException(oError);
     }
   }
 
@@ -91,7 +92,7 @@ export class ProjectsController implements OnModuleInit {
       };
       return res.status(response.status).send(data);
     } catch (oError) {
-      throw new Error(oError);
+      catchException(oError);
     }
   }
 
