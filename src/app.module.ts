@@ -9,6 +9,8 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard, PassportModule } from '@nestjs/passport';
+import { AdminJwtStrategy } from './auth/strategies/admin-jwt.strategy';
+import { SERVICE_TYPES } from './enums/service-types.enum';
 import { PropertiesController } from './properties-service/properties/properties.controller';
 import { PropertiesService } from './properties-service/properties/properties.service';
 import {
@@ -36,7 +38,7 @@ import { DevelopersService } from './properties-service/developers/developers.se
     }),
     ClientsModule.register([
       {
-        name: 'USER_SERVICE',
+        name: SERVICE_TYPES.USER_SERVICE,
         transport: Transport.KAFKA,
         options: {
           client: {
@@ -50,7 +52,7 @@ import { DevelopersService } from './properties-service/developers/developers.se
         },
       },
       {
-        name: 'AUTH_SERVICE',
+        name: SERVICE_TYPES.AUTH_SERVICE,
         transport: Transport.KAFKA,
         options: {
           client: {
@@ -64,7 +66,7 @@ import { DevelopersService } from './properties-service/developers/developers.se
         },
       },
       {
-        name: 'ADMIN_SERVICE',
+        name: SERVICE_TYPES.ADMIN_SERVICE,
         transport: Transport.KAFKA,
         options: {
           client: {
@@ -104,7 +106,7 @@ import { DevelopersService } from './properties-service/developers/developers.se
   providers: [
     AppService,
     AdminService,
-    JwtStrategy,
+    JwtStrategy, AdminJwtStrategy,
     ConfigService,
     PropertiesService,
     LocationService,

@@ -9,12 +9,15 @@ import { GetForgotPasswordRequest } from './dto/requests/get-forgot-password-req
 import { Schema } from 'mongoose';
 import { CreateResetPasswordRequest } from './dto/requests/create-reset-password-request';
 import { OnboardingVerifyRequest } from './dto/requests/onboarding-verify-request';
+import { EVENT_TOPICS } from './enums/event-topics.enum';
+import { SERVICE_TYPES } from './enums/service-types.enum';
+import { GetUserDetailsRequest } from './dto/requests/get-user-details-request';
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject('USER_SERVICE') private readonly billingClient: ClientKafka,
-    @Inject('AUTH_SERVICE') private readonly authClient: ClientKafka,
+    @Inject(SERVICE_TYPES.USER_SERVICE) private readonly billingClient: ClientKafka,
+    @Inject(SERVICE_TYPES.AUTH_SERVICE) private readonly authClient: ClientKafka,
   ) {}
 
   getHello(): string {
@@ -30,21 +33,21 @@ export class AppService {
 
   async signIn(login: LoginDto) {
     return await this.authClient
-      .send('login', new GetUserRequest(login.email, login.password))
+      .send(EVENT_TOPICS.LOGIN, new GetUserRequest(login.email, login.password))
       .toPromise()
       .catch(err => err);
   }
 
   async forgotPasswordRequest(email: string) {
     return await this.authClient
-      .send('forgot-password', new GetForgotPasswordRequest(email))
+      .send(EVENT_TOPICS.FORGOT_PASSWORD, new GetForgotPasswordRequest(email))
       .toPromise()
       .catch(err => err);
   }
 
   async registerUser(user: RegisterUserDto) {
     return await this.authClient
-      .send('register', new CreateRegistrationRequest(
+      .send(EVENT_TOPICS.REGISTER, new CreateRegistrationRequest(
         user.email,
         user.firstName,
         user.lastName,
@@ -64,7 +67,7 @@ export class AppService {
 
   async resetPassword(password: string, userId: Schema.Types.ObjectId) {
     return await this.authClient
-      .send('reset-password', new CreateResetPasswordRequest(
+      .send(EVENT_TOPICS.RESET_PASSWORD, new CreateResetPasswordRequest(
         password,
         userId,
       )).toPromise()
@@ -73,10 +76,25 @@ export class AppService {
 
   async verifyEmail(otp: string, userId: Schema.Types.ObjectId) {
     return await this.authClient
-      .send('onboarding-verify', new OnboardingVerifyRequest(
+      .send(EVENT_TOPICS.ONBOARDING_VERIFY, new OnboardingVerifyRequest(
         otp,
         userId,
       )).toPromise()
+      .catch(err => err);
+  }
+
+  async getUser(userId: Schema.Types.ObjectId) {
+    return await this.authClient
+      .send(EVENT_TOPICS.GET_USER_DETAILS, new GetUserDetailsRequest(
+        userId,
+      )).toPromise()
+      .catch(err => err);
+  }
+
+  async getCountries() {
+    return await this.authClient
+      .send(EVENT_TOPICS.GET_COUNTRIES, {})
+      .toPromise()
       .catch(err => err);
   }
 }

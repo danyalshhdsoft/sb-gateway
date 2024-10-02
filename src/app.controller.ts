@@ -1,12 +1,11 @@
-import { BadRequestException, Body, Controller, Get, Inject, NotFoundException, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { CreateOrderRequest } from './create-order-request.dto';
 import { LoginDto, RegisterUserDto, VerifyEmailDto } from './dto/loginDto';
 import { Response } from 'express';
-import { ClientKafka, RpcException } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { ResetPasswordDto, ResetPasswordRequestDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import ApiResponse from './utils/api-response.util';
+import { EVENT_TOPICS } from './enums/event-topics.enum';
 
 @Controller()
 export class AppController {
@@ -18,6 +17,25 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user')
+  async getUser(
+    @Req() req: any,
+    @Res() response: Response
+  ) {
+    const user: any = await this.appService.getUser(req.user.id);
+    return response.status(user.status).send(user);
+  }
+
+  @Get('countries')
+  async getCountries(
+    @Req() req: any,
+    @Res() response: Response
+  ) {
+    const countries: any = await this.appService.getCountries();
+    return countries ? response.status(countries.status).send(countries) : response.send({});
   }
 
   @Post('signin')
@@ -63,8 +81,8 @@ export class AppController {
     @Res() response: Response
   ) {
     //try {
-      const res: any = await this.appService.verifyEmail(verifyEmailDto.otp, req.user.id);
-      return res ? response.status(res?.status).send(res.data) : null;
+    const res: any = await this.appService.verifyEmail(verifyEmailDto.otp, req.user.id);
+    return res ? response.status(res?.status).send(res.data) : null;
     // }
     // catch (error) {
     //   if (error instanceof RpcException) {
@@ -89,11 +107,13 @@ export class AppController {
   // }
 
   onModuleInit() {
-    this.authClient.subscribeToResponseOf('login');
-    this.authClient.subscribeToResponseOf('register');
-    this.authClient.subscribeToResponseOf('forgot-password');
-    this.authClient.subscribeToResponseOf('reset-password');
-    this.authClient.subscribeToResponseOf('authorize_user');
-    this.authClient.subscribeToResponseOf('onboarding-verify');
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.LOGIN);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.REGISTER);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.FORGOT_PASSWORD);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.RESET_PASSWORD);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.AUTHORIZE_USER);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.ONBOARDING_VERIFY);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.GET_USER_DETAILS);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.GET_COUNTRIES);
   }
 }
