@@ -90,4 +90,11 @@ export class AppService {
       )).toPromise()
       .catch(err => err);
   }
+
+  async getCountries() {
+    return await this.authClient
+      .send(EVENT_TOPICS.GET_COUNTRIES, {})
+      .toPromise()
+      .catch(err => err);
+  }
 }

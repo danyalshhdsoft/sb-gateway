@@ -26,7 +26,16 @@ export class AppController {
     @Res() response: Response
   ) {
     const user: any = await this.appService.getUser(req.user.id);
-    return response.send(user);
+    return response.status(user.status).send(user);
+  }
+
+  @Get('countries')
+  async getCountries(
+    @Req() req: any,
+    @Res() response: Response
+  ) {
+    const countries: any = await this.appService.getCountries();
+    return countries ? response.status(countries.status).send(countries) : response.send({});
   }
 
   @Post('signin')
@@ -105,5 +114,6 @@ export class AppController {
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.AUTHORIZE_USER);
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.ONBOARDING_VERIFY);
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.GET_USER_DETAILS);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.GET_COUNTRIES);
   }
 }
