@@ -11,8 +11,17 @@ import {
 } from '@nestjs/common';
 
 export function catchException(e: Error) {
+  if (!e || Object.keys(e).length == 0) {
+    throw new HttpException(
+      `Internal error: Something went wrong in your API operation`,
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
   if (e instanceof HttpException) {
     throw new HttpException(e.message, e.getStatus());
+  }
+  if (e instanceof TypeError) {
+    throw new BadRequestException(e.message);
   }
   if (e.name === 'CastError') {
     throw new BadRequestException('Invalid ID');
@@ -42,6 +51,8 @@ export function catchException(e: Error) {
     throw new InternalServerErrorException('Invalid reference in code');
   } else if (e.name === 'RangeError') {
     throw new BadRequestException('Value out of range');
+  } else if (e.name === 'BadRequestException') {
+    throw new BadRequestException(e.message);
   } else {
     throw new HttpException(
       `Internal error: ${e.message} `,

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ClientKafka, RpcException } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import {
   CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
   KAFKA_DEVELOPERS_TOPIC,
@@ -22,7 +22,7 @@ export class DevelopersService {
         .toPromise();
       return responseDevelopers;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -37,7 +37,7 @@ export class DevelopersService {
         .toPromise();
       return responseDevelopers;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -48,7 +48,7 @@ export class DevelopersService {
         .toPromise();
       return responseDevelopers;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 
@@ -59,7 +59,7 @@ export class DevelopersService {
         .toPromise();
       return responseDevelopers;
     } catch (e) {
-      throw new RpcException(e);
+      throw e;
     }
   }
 }
