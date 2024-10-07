@@ -12,6 +12,7 @@ import { OnboardingVerifyRequest } from './dto/requests/onboarding-verify-reques
 import { EVENT_TOPICS } from './enums/event-topics.enum';
 import { SERVICE_TYPES } from './enums/service-types.enum';
 import { GetUserDetailsRequest } from './dto/requests/get-user-details-request';
+import { UpdateUserRequest } from './dto/requests/update-user-request.dto';
 
 @Injectable()
 export class AppService {
@@ -57,7 +58,6 @@ export class AppService {
         user.whatsAppPhone,
         user.gender,
         user.country,
-        user.roleType,
         user.agentDescription,
         user.developerId,
         user.serviceArea,
@@ -94,6 +94,27 @@ export class AppService {
   async getCountries() {
     return await this.authClient
       .send(EVENT_TOPICS.GET_COUNTRIES, {})
+      .toPromise()
+      .catch(err => err);
+  }
+
+  async updateUser(
+    userId: Schema.Types.ObjectId,
+    updateUserDto: RegisterUserDto
+  ) {
+    return await this.authClient
+      .send(EVENT_TOPICS.UPDATE_USER, new UpdateUserRequest(
+        userId,
+        updateUserDto.email,
+        updateUserDto.firstName,
+        updateUserDto.lastName,
+        updateUserDto.password,
+        updateUserDto.profilePicUrl,
+        updateUserDto.phone,
+        updateUserDto.whatsAppPhone,
+        updateUserDto.gender,
+        updateUserDto.country,
+      ))
       .toPromise()
       .catch(err => err);
   }

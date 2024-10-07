@@ -1,7 +1,8 @@
-import { Types } from "mongoose";
+import { Schema, Types } from "mongoose";
 
-export class CreateRegistrationRequest {
+export class UpdateUserRequest {
     constructor(
+      public readonly userId: Schema.Types.ObjectId,
       public readonly email: string,
       public readonly firstName: string,
       public readonly lastName: string,
@@ -11,13 +12,11 @@ export class CreateRegistrationRequest {
       public readonly profilePicUrl: string,
       public readonly gender: string,
       public readonly country: Types.ObjectId,
-      public readonly agentDescription: string,
-      public readonly developerId: Types.ObjectId,
-      public readonly serviceArea: Types.ObjectId
     ) {}
   
     toString() {
       return JSON.stringify({
+        userId: this.userId,
         email: this.email,
         firstName: this.firstName,
         password: this.password,
@@ -27,9 +26,6 @@ export class CreateRegistrationRequest {
         profilePicUrl: this.profilePicUrl,
         gender: this.gender,
         country: this.country,
-        agentDescription: this.agentDescription,
-        developerId: this.developerId,
-        serviceArea: this.serviceArea
       });
     }
   }

@@ -51,10 +51,6 @@ import {
     @IsNotEmpty()
     country: mongoose.Types.ObjectId;
   
-    @IsMongoId()
-    @IsNotEmpty()
-    roleType: mongoose.Types.ObjectId;
-  
     @IsString()
     @IsOptional()
     agentDescription: string;
