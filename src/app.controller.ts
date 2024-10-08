@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Inject, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { LoginDto, RegisterUserDto, VerifyEmailDto } from './dto/loginDto';
+import { LoginDto, RegisterUserDto, UpdateUserDto, VerifyEmailDto } from './dto/loginDto';
 import { Response } from 'express';
 import { ClientKafka } from '@nestjs/microservices';
 import { ResetPasswordDto, ResetPasswordRequestDto } from './dto/auth.dto';
@@ -33,10 +33,10 @@ export class AppController {
   @Put('user')
   async updateUser(
     @Req() req: any,
-    @Body() updateUserDto: RegisterUserDto,
+    @Body() updateUserDto: UpdateUserDto,
     @Res() response: Response
   ) {
-    const user: any = await this.appService.updateUser(req.user.userId, updateUserDto);
+    const user: any = await this.appService.updateUser(req.user.id, updateUserDto);
     return response.status(user.status).send(user);
   }
 

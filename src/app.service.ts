@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { CreateOrderRequest } from './create-order-request.dto';
 import { OrderCreatedEvent } from './order-created.event';
-import { LoginDto, RegisterUserDto, ResetPasswordDto } from './dto/loginDto';
+import { LoginDto, RegisterUserDto, ResetPasswordDto, UpdateUserDto } from './dto/loginDto';
 import { GetUserRequest } from './dto/requests/get-user-request.dto';
 import { CreateRegistrationRequest } from './dto/requests/create-registration-request';
 import { GetForgotPasswordRequest } from './dto/requests/get-forgot-password-request';
@@ -100,7 +100,7 @@ export class AppService {
 
   async updateUser(
     userId: Schema.Types.ObjectId,
-    updateUserDto: RegisterUserDto
+    updateUserDto: UpdateUserDto
   ) {
     return await this.authClient
       .send(EVENT_TOPICS.UPDATE_USER, new UpdateUserRequest(
@@ -108,7 +108,6 @@ export class AppService {
         updateUserDto.email,
         updateUserDto.firstName,
         updateUserDto.lastName,
-        updateUserDto.password,
         updateUserDto.profilePicUrl,
         updateUserDto.phone,
         updateUserDto.whatsAppPhone,

@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka, RpcException } from '@nestjs/microservices';
 import { AdminSignupDto } from 'src/dto/admin/admin.auth.dto';
+import { RegisterAgencyRequestDto } from 'src/dto/admin/agency.dto';
 import { IsIdDTO } from 'src/dto/admin/id.dto';
 import { CreateAdminRoleRequest } from 'src/dto/admin/requests/create-admin-role-request.dto';
 import { GetAdminRequest } from 'src/dto/admin/requests/get-admin-request.dto';
 import { GetAdminRolesRequest } from 'src/dto/admin/requests/get-admin-roles-request.dto';
-import { GetAdminSignupRequest } from 'src/dto/admin/requests/get-admin-signup.dto';
+import { RegisterAgencyQueryRequest } from 'src/dto/admin/requests/get-admin-signup.dto';
 import { UpdateAdminRoleRequest } from 'src/dto/admin/requests/update-admin-role-request.dto';
 import { PermissionDTO, UpdateRoleDto } from 'src/dto/admin/update.role.dto';
 import { LoginDto } from 'src/dto/loginDto';
@@ -25,15 +26,15 @@ export class AdminService {
             .catch(err => err);
     }
 
-    async signup(adminSignupDTO: AdminSignupDto) {
+    async registerAgencyQuery(registerAgencyRequestDTO: RegisterAgencyRequestDto) {
         return await this.adminClient
-            .send(EVENT_TOPICS.ADMIN_SIGNUP, new GetAdminSignupRequest(
-                adminSignupDTO.email,
-                adminSignupDTO.password,
-                adminSignupDTO.firstName,
-                adminSignupDTO.lastName,
-                adminSignupDTO.isSuperAdmin,
-                adminSignupDTO.role,
+            .send(EVENT_TOPICS.REGISTER_AGENCY_QUERY, new RegisterAgencyQueryRequest(
+                registerAgencyRequestDTO.email,
+                registerAgencyRequestDTO.password,
+                registerAgencyRequestDTO.firstName,
+                registerAgencyRequestDTO.lastName,
+                registerAgencyRequestDTO.companyName,
+                registerAgencyRequestDTO.phone
             )).toPromise()
             .catch(err => err);
     }

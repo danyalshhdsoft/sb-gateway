@@ -43,14 +43,13 @@ export class AdminController {
         }
     }
 
-    @Post('signup')
+    @Post('register-agency-query')
     async adminSignup(
         @Body() adminSigninDto: AdminSignupDto,
         @Res() res: Response,
     ) {
-        console.log('coming here');
-        const user = await this.adminService.signup(adminSigninDto);
-        return res.status(user.status).send(user.data);
+        const agency = await this.adminService.registerAgencyQuery(adminSigninDto);
+        return res.status(agency.status).send(agency.data);
     }
 
     @UseGuards(AdminJwtAuthGuard)
@@ -79,6 +78,13 @@ export class AdminController {
       return this.adminService.getRoles(page, limit);
     }
 
+    // @Post('add-agency')
+    // async addAgency(
+    //     @Body() createAgencyDTO: CreateAgencyDTO
+    // ) {
+    //   return this.adminService.addAgency(page, limit);
+    // }
+
     //   @Post('forgot-password/request')
     //   async forgotPasswordRequest(@Body()  forogtPasswordRequestDto: ForgotPasswordRequestDto) {
     //     return await this.adminService.forgotPasswordRequest(forogtPasswordRequestDto.email);
@@ -96,7 +102,7 @@ export class AdminController {
 
     onModuleInit() {
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_LOGIN);
-        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_SIGNUP);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.REGISTER_AGENCY_QUERY);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_CREATE_ROLE);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_UPDATE_ROLE);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_GET_ROLES);
