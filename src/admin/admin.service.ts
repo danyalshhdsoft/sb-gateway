@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka, RpcException } from '@nestjs/microservices';
 import { AdminSignupDto } from 'src/dto/admin/admin.auth.dto';
-import { RegisterAgencyRequestDto } from 'src/dto/admin/agency.dto';
+import { CreateAgencyRequestDto, RegisterAgencyRequestDto } from 'src/dto/admin/agency.dto';
 import { IsIdDTO } from 'src/dto/admin/id.dto';
 import { CreateAdminRoleRequest } from 'src/dto/admin/requests/create-admin-role-request.dto';
+import { CreateAgencyRequest } from 'src/dto/admin/requests/create-agency-request.dto';
 import { GetAdminRequest } from 'src/dto/admin/requests/get-admin-request.dto';
 import { GetAdminRolesRequest } from 'src/dto/admin/requests/get-admin-roles-request.dto';
 import { RegisterAgencyQueryRequest } from 'src/dto/admin/requests/get-admin-signup.dto';
@@ -62,6 +63,19 @@ export class AdminService {
             .send(EVENT_TOPICS.ADMIN_GET_ROLES, new GetAdminRolesRequest(
                 page,
                 limit,
+            )).toPromise()
+            .catch(err => err);
+    }
+
+    async createAgency(createAgencyDto: CreateAgencyRequestDto) {
+        return await this.adminClient
+            .send(EVENT_TOPICS.CREATE_AGENCY, new CreateAgencyRequest(
+                createAgencyDto.email,
+                createAgencyDto.firstName,
+                createAgencyDto.lastName,
+                createAgencyDto.companyName,
+                createAgencyDto.phone,
+                createAgencyDto.password
             )).toPromise()
             .catch(err => err);
     }

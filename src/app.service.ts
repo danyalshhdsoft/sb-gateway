@@ -108,9 +108,9 @@ export class AppService {
         updateUserDto.email,
         updateUserDto.firstName,
         updateUserDto.lastName,
-        updateUserDto.profilePicUrl,
         updateUserDto.phone,
         updateUserDto.whatsAppPhone,
+        updateUserDto.profilePicUrl,
         updateUserDto.gender,
         updateUserDto.country,
       ))

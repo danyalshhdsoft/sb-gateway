@@ -82,7 +82,7 @@ import {
     @IsOptional()
     profilePicUrl: string;
   
-    @IsString()
+    @IsPhoneNumber()
     @IsOptional()
     phone: string;
   

@@ -12,6 +12,7 @@ import { UpdateRoleDto } from 'src/dto/admin/update.role.dto';
 import { CreateRoleDto } from 'src/dto/admin/create-role.dto';
 import { AdminJwtAuthGuard } from 'src/auth/guards/admin-jwt-auth.guard';
 import { EVENT_TOPICS } from 'src/enums/event-topics.enum';
+import { CreateAgencyRequestDto } from 'src/dto/admin/agency.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -49,6 +50,15 @@ export class AdminController {
         @Res() res: Response,
     ) {
         const agency = await this.adminService.registerAgencyQuery(adminSigninDto);
+        return res.status(agency.status).send(agency.data);
+    }
+
+    @Post('create-agency')
+    async createAgency(
+        @Body() createAgencyDto: CreateAgencyRequestDto,
+        @Res() res: Response,
+    ) {
+        const agency = await this.adminService.createAgency(createAgencyDto);
         return res.status(agency.status).send(agency.data);
     }
 
@@ -106,5 +116,6 @@ export class AdminController {
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_CREATE_ROLE);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_UPDATE_ROLE);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_GET_ROLES);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.CREATE_AGENCY);
     }
 }
