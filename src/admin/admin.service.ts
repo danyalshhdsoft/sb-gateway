@@ -5,6 +5,7 @@ import { CreateAgencyRequestDto, RegisterAgencyRequestDto } from 'src/dto/admin/
 import { IsIdDTO } from 'src/dto/admin/id.dto';
 import { CreateAdminRoleRequest } from 'src/dto/admin/requests/create-admin-role-request.dto';
 import { CreateAgencyRequest } from 'src/dto/admin/requests/create-agency-request.dto';
+import { DeleteAgencyRequest } from 'src/dto/admin/requests/delete-agency.dto';
 import { GetAdminRequest } from 'src/dto/admin/requests/get-admin-request.dto';
 import { GetAdminRolesRequest } from 'src/dto/admin/requests/get-admin-roles-request.dto';
 import { RegisterAgencyQueryRequest } from 'src/dto/admin/requests/get-admin-signup.dto';
@@ -76,6 +77,27 @@ export class AdminService {
                 createAgencyDto.companyName,
                 createAgencyDto.phone,
                 createAgencyDto.password
+            )).toPromise()
+            .catch(err => err);
+    }
+
+    async updateAgency(updateAgencyDto: CreateAgencyRequestDto) {
+        return await this.adminClient
+            .send(EVENT_TOPICS.UPDATE_AGENCY, new CreateAgencyRequest(
+                updateAgencyDto.email,
+                updateAgencyDto.firstName,
+                updateAgencyDto.lastName,
+                updateAgencyDto.companyName,
+                updateAgencyDto.phone,
+                updateAgencyDto.password
+            )).toPromise()
+            .catch(err => err);
+    }
+
+    async deleteAgency(deleteAgencyDto: IsIdDTO) {
+        return await this.adminClient
+            .send(EVENT_TOPICS.DELETE_AGENCY, new DeleteAgencyRequest(
+                deleteAgencyDto.id,
             )).toPromise()
             .catch(err => err);
     }

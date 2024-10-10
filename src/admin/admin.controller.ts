@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 // import { AppService } from './app.service';
 // import { CreateOrderRequest } from './create-order-request.dto';
 // import { LoginDto, RegisterUserDto } from './dto/loginDto';
@@ -53,12 +53,30 @@ export class AdminController {
         return res.status(agency.status).send(agency.data);
     }
 
-    @Post('create-agency')
+    @Post('agency')
     async createAgency(
         @Body() createAgencyDto: CreateAgencyRequestDto,
         @Res() res: Response,
     ) {
         const agency = await this.adminService.createAgency(createAgencyDto);
+        return res.status(agency.status).send(agency.data);
+    }
+
+    @Put('agency')
+    async updateAgency(
+        @Body() createAgencyDto: CreateAgencyRequestDto,
+        @Res() res: Response,
+    ) {
+        const agency = await this.adminService.updateAgency(createAgencyDto);
+        return res.status(agency.status).send(agency.data);
+    }
+
+    @Delete('agency')
+    async deleteAgency(
+        @Query() isIdDTO: IsIdDTO,
+        @Res() res: Response,
+    ) {
+        const agency = await this.adminService.deleteAgency(isIdDTO);
         return res.status(agency.status).send(agency.data);
     }
 
@@ -117,5 +135,7 @@ export class AdminController {
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_UPDATE_ROLE);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_GET_ROLES);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.CREATE_AGENCY);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.UPDATE_AGENCY);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.DELETE_AGENCY);
     }
 }
