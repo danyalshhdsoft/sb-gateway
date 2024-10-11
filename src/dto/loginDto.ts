@@ -4,6 +4,7 @@ import {
     IsMongoId,
     IsNotEmpty,
     IsOptional,
+    IsPhoneNumber,
     IsString,
     Validate,
   } from 'class-validator';
@@ -35,7 +36,7 @@ import {
     @IsOptional()
     profilePicUrl: string;
   
-    @IsString()
+    @IsPhoneNumber()
     @IsOptional()
     phone: string;
   
@@ -51,10 +52,6 @@ import {
     @IsNotEmpty()
     country: mongoose.Types.ObjectId;
   
-    @IsMongoId()
-    @IsNotEmpty()
-    roleType: mongoose.Types.ObjectId;
-  
     @IsString()
     @IsOptional()
     agentDescription: string;
@@ -66,6 +63,40 @@ import {
     @IsMongoId()
     @IsOptional()
     serviceArea: mongoose.Types.ObjectId;
+  }
+
+  export class UpdateUserDto {
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
+  
+    @IsString()
+    @IsNotEmpty()
+    firstName: string;
+  
+    @IsString()
+    @IsNotEmpty()
+    lastName: string;
+  
+    @IsString()
+    @IsOptional()
+    profilePicUrl: string;
+  
+    @IsPhoneNumber()
+    @IsOptional()
+    phone: string;
+  
+    @IsString()
+    @IsOptional()
+    whatsAppPhone: string;
+  
+    @IsEnum(GENDER)
+    @IsOptional()
+    gender: GENDER;
+  
+    @IsMongoId()
+    @IsNotEmpty()
+    country: mongoose.Types.ObjectId;
   }
   export class LoginDto {
     @IsEmail()

@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { LoginDto, RegisterUserDto, VerifyEmailDto } from './dto/loginDto';
+import { LoginDto, RegisterUserDto, UpdateUserDto, VerifyEmailDto } from './dto/loginDto';
 import { Response } from 'express';
 import { ClientKafka } from '@nestjs/microservices';
 import { ResetPasswordDto, ResetPasswordRequestDto } from './dto/auth.dto';
@@ -26,6 +26,17 @@ export class AppController {
     @Res() response: Response
   ) {
     const user: any = await this.appService.getUser(req.user.id);
+    return response.status(user.status).send(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('user')
+  async updateUser(
+    @Req() req: any,
+    @Body() updateUserDto: UpdateUserDto,
+    @Res() response: Response
+  ) {
+    const user: any = await this.appService.updateUser(req.user.id, updateUserDto);
     return response.status(user.status).send(user);
   }
 
@@ -115,5 +126,6 @@ export class AppController {
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.ONBOARDING_VERIFY);
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.GET_USER_DETAILS);
     this.authClient.subscribeToResponseOf(EVENT_TOPICS.GET_COUNTRIES);
+    this.authClient.subscribeToResponseOf(EVENT_TOPICS.UPDATE_USER);
   }
 }

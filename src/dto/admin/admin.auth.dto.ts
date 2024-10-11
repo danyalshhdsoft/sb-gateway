@@ -62,6 +62,10 @@ export class AdminSignupDto {
   @IsOptional()
   lastName?: string;
 
+  @IsString()
+  @IsOptional()
+  companyName?: string;
+
   @IsBoolean()
   @IsOptional()
   isSuperAdmin?: boolean;

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { CreateOrderRequest } from './create-order-request.dto';
 import { OrderCreatedEvent } from './order-created.event';
-import { LoginDto, RegisterUserDto, ResetPasswordDto } from './dto/loginDto';
+import { LoginDto, RegisterUserDto, ResetPasswordDto, UpdateUserDto } from './dto/loginDto';
 import { GetUserRequest } from './dto/requests/get-user-request.dto';
 import { CreateRegistrationRequest } from './dto/requests/create-registration-request';
 import { GetForgotPasswordRequest } from './dto/requests/get-forgot-password-request';
@@ -12,6 +12,7 @@ import { OnboardingVerifyRequest } from './dto/requests/onboarding-verify-reques
 import { EVENT_TOPICS } from './enums/event-topics.enum';
 import { SERVICE_TYPES } from './enums/service-types.enum';
 import { GetUserDetailsRequest } from './dto/requests/get-user-details-request';
+import { UpdateUserRequest } from './dto/requests/update-user-request.dto';
 
 @Injectable()
 export class AppService {
@@ -52,12 +53,11 @@ export class AppService {
         user.firstName,
         user.lastName,
         user.password,
-        user.profilePicUrl,
         user.phone,
+        user.profilePicUrl,
         user.whatsAppPhone,
         user.gender,
         user.country,
-        user.roleType,
         user.agentDescription,
         user.developerId,
         user.serviceArea,
@@ -94,6 +94,26 @@ export class AppService {
   async getCountries() {
     return await this.authClient
       .send(EVENT_TOPICS.GET_COUNTRIES, {})
+      .toPromise()
+      .catch(err => err);
+  }
+
+  async updateUser(
+    userId: Schema.Types.ObjectId,
+    updateUserDto: UpdateUserDto
+  ) {
+    return await this.authClient
+      .send(EVENT_TOPICS.UPDATE_USER, new UpdateUserRequest(
+        userId,
+        updateUserDto.email,
+        updateUserDto.firstName,
+        updateUserDto.lastName,
+        updateUserDto.phone,
+        updateUserDto.whatsAppPhone,
+        updateUserDto.profilePicUrl,
+        updateUserDto.gender,
+        updateUserDto.country,
+      ))
       .toPromise()
       .catch(err => err);
   }

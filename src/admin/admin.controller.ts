@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 // import { AppService } from './app.service';
 // import { CreateOrderRequest } from './create-order-request.dto';
 // import { LoginDto, RegisterUserDto } from './dto/loginDto';
@@ -12,6 +12,7 @@ import { UpdateRoleDto } from 'src/dto/admin/update.role.dto';
 import { CreateRoleDto } from 'src/dto/admin/create-role.dto';
 import { AdminJwtAuthGuard } from 'src/auth/guards/admin-jwt-auth.guard';
 import { EVENT_TOPICS } from 'src/enums/event-topics.enum';
+import { CreateAgencyRequestDto } from 'src/dto/admin/agency.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -43,14 +44,40 @@ export class AdminController {
         }
     }
 
-    @Post('signup')
+    @Post('register-agency-query')
     async adminSignup(
         @Body() adminSigninDto: AdminSignupDto,
         @Res() res: Response,
     ) {
-        console.log('coming here');
-        const user = await this.adminService.signup(adminSigninDto);
-        return res.status(user.status).send(user.data);
+        const agency = await this.adminService.registerAgencyQuery(adminSigninDto);
+        return res.status(agency.status).send(agency.data);
+    }
+
+    @Post('agency')
+    async createAgency(
+        @Body() createAgencyDto: CreateAgencyRequestDto,
+        @Res() res: Response,
+    ) {
+        const agency = await this.adminService.createAgency(createAgencyDto);
+        return res.status(agency.status).send(agency.data);
+    }
+
+    @Put('agency')
+    async updateAgency(
+        @Body() createAgencyDto: CreateAgencyRequestDto,
+        @Res() res: Response,
+    ) {
+        const agency = await this.adminService.updateAgency(createAgencyDto);
+        return res.status(agency.status).send(agency.data);
+    }
+
+    @Delete('agency')
+    async deleteAgency(
+        @Query() isIdDTO: IsIdDTO,
+        @Res() res: Response,
+    ) {
+        const agency = await this.adminService.deleteAgency(isIdDTO);
+        return res.status(agency.status).send(agency.data);
     }
 
     @UseGuards(AdminJwtAuthGuard)
@@ -79,6 +106,13 @@ export class AdminController {
       return this.adminService.getRoles(page, limit);
     }
 
+    // @Post('add-agency')
+    // async addAgency(
+    //     @Body() createAgencyDTO: CreateAgencyDTO
+    // ) {
+    //   return this.adminService.addAgency(page, limit);
+    // }
+
     //   @Post('forgot-password/request')
     //   async forgotPasswordRequest(@Body()  forogtPasswordRequestDto: ForgotPasswordRequestDto) {
     //     return await this.adminService.forgotPasswordRequest(forogtPasswordRequestDto.email);
@@ -96,9 +130,12 @@ export class AdminController {
 
     onModuleInit() {
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_LOGIN);
-        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_SIGNUP);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.REGISTER_AGENCY_QUERY);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_CREATE_ROLE);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_UPDATE_ROLE);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_GET_ROLES);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.CREATE_AGENCY);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.UPDATE_AGENCY);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.DELETE_AGENCY);
     }
 }
