@@ -48,3 +48,8 @@ export const KAFKA_DEVELOPERS_TOPIC = {
   retrieve_developers: 'retrieve_developers',
   delete_developer: 'delete_developer',
 };
+
+export const KAFKA_ELASTIC_SEARCH_TOPIC = {
+  search: 'search',
+  searchAutocomplete: 'searchAutocomplete'
+};
