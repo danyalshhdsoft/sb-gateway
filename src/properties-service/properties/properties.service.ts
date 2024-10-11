@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 import {
   CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
   KAFKA_PROPERTIES_TOPIC,
@@ -18,8 +19,23 @@ export class PropertiesService {
 
   async addNewProperty(oPropertyRequest: any) {
     try {
-      const responseProperties = this.propertiesClient
-        .send(KAFKA_PROPERTIES_TOPIC.add_properties, oPropertyRequest)
+      const responseProperties = await firstValueFrom(
+        this.propertiesClient.send(KAFKA_PROPERTIES_TOPIC.add_properties, {
+          oPropertyRequest,
+        }),
+      );
+      return responseProperties;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async testUploadFile(oPropertyRequest: any) {
+    try {
+      const responseProperties = await this.propertiesClient
+        .send('test-uploads', {
+          oPropertyRequest,
+        })
         .toPromise();
       return responseProperties;
     } catch (e) {
