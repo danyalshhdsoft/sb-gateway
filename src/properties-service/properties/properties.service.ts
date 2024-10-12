@@ -33,7 +33,8 @@ export class PropertiesService {
     try {
       const oUpdateProperty = {
         id: id,
-        data: data,
+        oPropertyRequest: data.oPropertyRequest,
+        imagesMeta: data.imagesMeta,
       };
       const responseProperties = this.propertiesClient
         .send(KAFKA_PROPERTIES_TOPIC.update_properties, oUpdateProperty)

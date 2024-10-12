@@ -52,7 +52,7 @@ export class PropertiesController implements OnModuleInit {
           : [];
       // const oPropertyRequest = JSON.parse(propertyRequests);
       const oPropertyRequest = propertyRequests;
-      let imagesMeta = {};
+      let imagesMeta = [];
       if (images.length > 0) {
         const uploads = await this.BroadcastService.BroadcastFileUpload(
           images,
@@ -67,8 +67,7 @@ export class PropertiesController implements OnModuleInit {
         oPropertyRequest,
         imagesMeta,
       };
-      //currently the sb-uploads send event is going from sb-properties move that here
-      //send an event with media object from here and then from the response send the response to sb-properties below
+
       const result = await this.propertiesService.addNewProperty(oRequestbody);
       const data = {
         message: result.message,
@@ -122,15 +121,39 @@ export class PropertiesController implements OnModuleInit {
   }
 
   @Put(':id')
+  @UseInterceptors(AnyFilesInterceptor())
   async updatePropertyByAdmin(
+    @UploadedFiles() files: Express.Multer.File[],
     @Param('id') id: string,
     @Body() propertyRequests: any,
     @Res() res: Response,
   ) {
     try {
+      const images =
+        files && files.length > 0
+          ? files.filter((file) => file.fieldname === 'images')
+          : [];
+      // const oPropertyRequest = JSON.parse(propertyRequests);
+      const oPropertyRequest = propertyRequests;
+      let imagesMeta = [];
+      if (images.length > 0) {
+        const uploads = await this.BroadcastService.BroadcastFileUpload(
+          images,
+          KAFKA_FILE_UPLOADS_TOPIC.upload_files,
+          'properties',
+        );
+        console.log(uploads);
+        oPropertyRequest['images'] =
+          uploads && uploads.filesUrls ? uploads.filesUrls : [];
+        imagesMeta = uploads.metadata;
+      }
+      const oRequestbody = {
+        oPropertyRequest,
+        imagesMeta,
+      };
       const result = await this.propertiesService.updateProperty(
         id,
-        propertyRequests,
+        oRequestbody,
       );
       const data = {
         message: result.message,
