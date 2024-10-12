@@ -19,17 +19,22 @@ import { ClientKafka } from '@nestjs/microservices';
 import {
   CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
   KAFKA_ELASTIC_SEARCH_TOPIC,
+  KAFKA_FILE_UPLOADS_TOPIC,
   KAFKA_PROPERTIES_TOPIC,
 } from 'src/utils/constants/kafka-const';
 import { Response } from 'express';
 import { catchException } from 'src/utils/helper/handle.exceptionh.helper';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { BroadcastUploadsService } from './broadcast-uploads.service';
 @Controller('properties')
 export class PropertiesController implements OnModuleInit {
   constructor(
     private readonly propertiesService: PropertiesService,
     @Inject(CLIENTS_MODULE_KAFKA_NAME_PROPERTY.PROPERTIES_SERVICE)
     private propertiesClient: ClientKafka,
+    @Inject(CLIENTS_MODULE_KAFKA_NAME_PROPERTY.UPLOADS_SERVICE)
+    private uploadsClient: ClientKafka,
+    private BroadcastService: BroadcastUploadsService,
   ) {}
 
   @Post('add-properties')
@@ -41,18 +46,26 @@ export class PropertiesController implements OnModuleInit {
   ) {
     try {
       // Filter uploaded files by fieldname
-      const images = files.filter((file) => file.fieldname === 'images');
-      const oPropertyRequest = JSON.parse(propertyRequests);
-
-      const media = {
-        images: images,
-        image360Tour: oPropertyRequest.image360Tour,
-        videos: oPropertyRequest.videos,
-      };
-
+      const images =
+        files && files.length > 0
+          ? files.filter((file) => file.fieldname === 'images')
+          : [];
+      // const oPropertyRequest = JSON.parse(propertyRequests);
+      const oPropertyRequest = propertyRequests;
+      let imagesMeta = {};
+      if (images.length > 0) {
+        const uploads = await this.BroadcastService.BroadcastFileUpload(
+          images,
+          KAFKA_FILE_UPLOADS_TOPIC.upload_files,
+          'properties',
+        );
+        oPropertyRequest.media['images'] =
+          uploads && uploads.filesUrls ? uploads.filesUrls : [];
+        imagesMeta = uploads.metadata;
+      }
       const oRequestbody = {
         oPropertyRequest,
-        media,
+        imagesMeta,
       };
       //currently the sb-uploads send event is going from sb-properties move that here
       //send an event with media object from here and then from the response send the response to sb-properties below
@@ -76,26 +89,33 @@ export class PropertiesController implements OnModuleInit {
   ) {
     try {
       // Filter uploaded files by fieldname
-      const images = files.filter((file) => file.fieldname === 'images');
+      const images =
+        files && files.length > 0
+          ? files.filter((file) => file.fieldname === 'images')
+          : [];
       // const oPropertyRequest = JSON.parse(propertyRequests);
       const oPropertyRequest = propertyRequests;
-      const media = {
-        images: images,
-        image360Tour: oPropertyRequest.image360Tour,
-        videos: oPropertyRequest.videos,
-      };
-
+      let imagesMeta = [];
+      if (images.length > 0) {
+        const uploads = await this.BroadcastService.BroadcastFileUpload(
+          images,
+          KAFKA_FILE_UPLOADS_TOPIC.upload_files,
+          'properties',
+        );
+        console.log(uploads);
+        oPropertyRequest['images'] =
+          uploads && uploads.filesUrls ? uploads.filesUrls : [];
+        imagesMeta = uploads.metadata;
+      }
       const oRequestbody = {
         oPropertyRequest,
-        media,
+        imagesMeta,
       };
-
-      const result = await this.propertiesService.testUploadFile(oRequestbody);
       const data = {
-        message: result.message,
-        data: result.data,
+        message: 'Test is successfull',
+        data: oRequestbody,
       };
-      return res.status(result.status).send(data);
+      return res.status(200).send(data);
     } catch (oError) {
       catchException(oError);
     }
@@ -172,13 +192,8 @@ export class PropertiesController implements OnModuleInit {
   }
 
   @Get('autocomplete')
-  async autocomplete(
-    @Query('query') query: string,
-    @Res() res: Response,
-  ) {
-    const result = await this.propertiesService.searchAutocomplete(
-      query
-    );
+  async autocomplete(@Query('query') query: string, @Res() res: Response) {
+    const result = await this.propertiesService.searchAutocomplete(query);
     const data = {
       message: result.message,
       data: result.data,
@@ -212,7 +227,7 @@ export class PropertiesController implements OnModuleInit {
       minPrice,
       maxPrice,
       from,
-      size
+      size,
     );
     const data = {
       message: result.message,
@@ -243,6 +258,9 @@ export class PropertiesController implements OnModuleInit {
     );
     this.propertiesClient.subscribeToResponseOf(
       KAFKA_ELASTIC_SEARCH_TOPIC.search,
+    );
+    this.uploadsClient.subscribeToResponseOf(
+      KAFKA_FILE_UPLOADS_TOPIC.upload_files,
     );
   }
 }

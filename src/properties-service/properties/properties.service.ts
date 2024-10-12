@@ -12,7 +12,7 @@ export class PropertiesService {
   constructor(
     @Inject(CLIENTS_MODULE_KAFKA_NAME_PROPERTY.PROPERTIES_SERVICE)
     private propertiesClient: ClientKafka,
-  ) { }
+  ) {}
 
   getHello(): string {
     return 'Hello World!';
@@ -21,22 +21,7 @@ export class PropertiesService {
   async addNewProperty(oPropertyRequest: any) {
     try {
       const responseProperties = await this.propertiesClient
-        .send(KAFKA_PROPERTIES_TOPIC.add_properties, {
-          oPropertyRequest,
-        })
-        .toPromise();
-      return responseProperties;
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  async testUploadFile(oPropertyRequest: any) {
-    try {
-      const responseProperties = await this.propertiesClient
-        .send('test-uploads', {
-          oPropertyRequest,
-        })
+        .send(KAFKA_PROPERTIES_TOPIC.add_properties, oPropertyRequest)
         .toPromise();
       return responseProperties;
     } catch (e) {
@@ -118,23 +103,26 @@ export class PropertiesService {
     minPrice: string,
     maxPrice: string,
     from: string,
-    size: string
+    size: string,
   ) {
     try {
       const responseProperties = await this.propertiesClient
-        .send(KAFKA_ELASTIC_SEARCH_TOPIC.search, new SearchPropertiesQueryRequest(
-          query,
-          bedroom,
-          washroom,
-          purpose,
-          status,
-          completionStatus,
-          propertyType,
-          minPrice,
-          maxPrice,
-          from,
-          size
-        ))
+        .send(
+          KAFKA_ELASTIC_SEARCH_TOPIC.search,
+          new SearchPropertiesQueryRequest(
+            query,
+            bedroom,
+            washroom,
+            purpose,
+            status,
+            completionStatus,
+            propertyType,
+            minPrice,
+            maxPrice,
+            from,
+            size,
+          ),
+        )
         .toPromise();
       return responseProperties;
     } catch (e) {

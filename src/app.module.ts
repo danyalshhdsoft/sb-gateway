@@ -24,6 +24,7 @@ import { ProjectsController } from './properties-service/projects/projects.contr
 import { ProjectsService } from './properties-service/projects/projects.service';
 import { DevelopersController } from './properties-service/developers/developers.controller';
 import { DevelopersService } from './properties-service/developers/developers.service';
+import { BroadcastUploadsService } from './properties-service/properties/broadcast-uploads.service';
 @Module({
   imports: [
     PassportModule,
@@ -93,6 +94,20 @@ import { DevelopersService } from './properties-service/developers/developers.se
           },
         },
       },
+      {
+        name: CLIENTS_MODULE_KAFKA_NAME_PROPERTY.UPLOADS_SERVICE,
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: KAFKA_OPTIONS_CLIENT_ID.uploads_service,
+            //brokers: ['host.docker.internal:9092'],
+            brokers: ['localhost:9092'],
+          },
+          consumer: {
+            groupId: KAFKA_CONSUMER_GROUP_ID.uploads_consumer,
+          },
+        },
+      },
     ]),
   ],
   controllers: [
@@ -112,6 +127,7 @@ import { DevelopersService } from './properties-service/developers/developers.se
     LocationService,
     ProjectsService,
     DevelopersService,
+    BroadcastUploadsService,
   ],
   exports: [JwtModule],
 })
