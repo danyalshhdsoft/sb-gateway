@@ -135,6 +135,14 @@ export class PropertiesController implements OnModuleInit {
           : [];
       // const oPropertyRequest = JSON.parse(propertyRequests);
       const oPropertyRequest = propertyRequests;
+      oPropertyRequest.media =
+        oPropertyRequest &&
+        oPropertyRequest !== null &&
+        Object.keys(oPropertyRequest).length > 0 &&
+        oPropertyRequest.media &&
+        oPropertyRequest.media !== null
+          ? oPropertyRequest.media
+          : {};
       let imagesMeta = [];
       if (images.length > 0) {
         const uploads = await this.BroadcastService.BroadcastFileUpload(
@@ -143,7 +151,7 @@ export class PropertiesController implements OnModuleInit {
           'properties',
         );
         console.log(uploads);
-        oPropertyRequest['images'] =
+        oPropertyRequest.media['images'] =
           uploads && uploads.filesUrls ? uploads.filesUrls : [];
         imagesMeta = uploads.metadata;
       }
