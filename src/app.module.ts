@@ -62,7 +62,7 @@ import { BroadcastUploadsService } from './properties-service/properties/broadca
             brokers: ['localhost:9092'],
           },
           consumer: {
-            groupId: 'user-consumer',
+            groupId: 'auth-consumer',
           },
         },
       },
