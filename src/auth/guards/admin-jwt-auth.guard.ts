@@ -70,7 +70,7 @@ export class AdminJwtAuthGuard implements CanActivate {
                     throw new UnauthorizedException('Permission denied');
                 }
             }
-            request.admin = { id: payload.id, email: payload.email, role: payload.role };
+            request.admin = { id: payload.id, email: payload.email, role: payload.role, fullname: payload.fullname };
         } catch (e) {
             console.log(e);
             throw new UnauthorizedException();

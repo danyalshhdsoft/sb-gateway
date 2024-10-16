@@ -25,6 +25,11 @@ import { ProjectsService } from './properties-service/projects/projects.service'
 import { DevelopersController } from './properties-service/developers/developers.controller';
 import { DevelopersService } from './properties-service/developers/developers.service';
 import { BroadcastUploadsService } from './properties-service/properties/broadcast-uploads.service';
+import { PropertyTypesService } from './properties-service/property-types/property-types.service';
+import { PropertyTypesController } from './properties-service/property-types/property-types.controller';
+import { AmenitiesController } from './properties-service/amenities/amenities.controller';
+import { AmenitiesService } from './properties-service/amenities/amenities.service';
+
 @Module({
   imports: [
     PassportModule,
@@ -117,6 +122,8 @@ import { BroadcastUploadsService } from './properties-service/properties/broadca
     LocationsController,
     ProjectsController,
     DevelopersController,
+    PropertyTypesController,
+    AmenitiesController,
   ],
   providers: [
     AppService,
@@ -128,6 +135,8 @@ import { BroadcastUploadsService } from './properties-service/properties/broadca
     ProjectsService,
     DevelopersService,
     BroadcastUploadsService,
+    PropertyTypesService,
+    AmenitiesService,
   ],
   exports: [JwtModule],
 })

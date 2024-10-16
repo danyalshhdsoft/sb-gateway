@@ -60,3 +60,11 @@ export const KAFKA_ELASTIC_SEARCH_TOPIC = {
   search: 'search',
   searchAutocomplete: 'searchAutocomplete',
 };
+
+export const KAFKA_PROPERTY_TYPES_TOPIC = {
+  retrieve_property_types: 'retrieve_property_types',
+};
+
+export const KAFKA_AMENITIES_TOPIC = {
+  retrieve_amenities: 'retrieve_amenities',
+};
