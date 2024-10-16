@@ -41,6 +41,10 @@ export class AdminJwtAuthGuard implements CanActivate {
                 },
             );
 
+            if (!payload.isSuperAdmin) {
+                request.admin = { id: payload.id, email: payload.email, role: payload.role };
+                return true;
+            }
             const adminRole = await this.adminClient
                 .send(EVENT_TOPICS.ADMIN_GET_ROLE_BY_ID, new AuthPayload(payload.role))
                 .toPromise()
