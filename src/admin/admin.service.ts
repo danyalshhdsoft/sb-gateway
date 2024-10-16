@@ -5,6 +5,7 @@ import { CreateAgencyRequestDto, RegisterAgencyRequestDto } from 'src/dto/admin/
 import { IsIdDTO } from 'src/dto/admin/id.dto';
 import { CreateAdminRoleRequest } from 'src/dto/admin/requests/create-admin-role-request.dto';
 import { CreateAgencyRequest } from 'src/dto/admin/requests/create-agency-request.dto';
+import { CreateSuperAdminRequest } from 'src/dto/admin/requests/create-super-admin-request.dto';
 import { DeleteAgencyRequest } from 'src/dto/admin/requests/delete-agency.dto';
 import { GetAdminRequest } from 'src/dto/admin/requests/get-admin-request.dto';
 import { GetAdminRolesRequest } from 'src/dto/admin/requests/get-admin-roles-request.dto';
@@ -77,6 +78,19 @@ export class AdminService {
                 createAgencyDto.companyName,
                 createAgencyDto.phone,
                 createAgencyDto.password
+            )).toPromise()
+            .catch(err => err);
+    }
+
+    async createSuperAdmin(createAgencyDto: AdminSignupDto) {
+        return await this.adminClient
+            .send(EVENT_TOPICS.CREATE_AGENCY, new CreateSuperAdminRequest(
+                createAgencyDto.email,
+                createAgencyDto.password,
+                createAgencyDto.firstName,
+                createAgencyDto.lastName,
+                createAgencyDto.isSuperAdmin,
+                createAgencyDto.role
             )).toPromise()
             .catch(err => err);
     }
