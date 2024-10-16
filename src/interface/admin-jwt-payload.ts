@@ -5,4 +5,5 @@ export interface AdminJWTPayload {
     fullname: string;
     email: string;
     role: string;
+    isSuperAdmin: boolean;
 }

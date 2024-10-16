@@ -62,6 +62,15 @@ export class AdminController {
         return res.status(agency.status).send(agency.data);
     }
 
+    @Post('create-super-admin')
+    async createSuperAdmin(
+        @Body() createAgencyDto: AdminSignupDto,
+        @Res() res: Response,
+    ) {
+        const admin = await this.adminService.createSuperAdmin(createAgencyDto);
+        return res.status(admin.status).send(admin.data);
+    }
+
     @Put('agency')
     async updateAgency(
         @Body() createAgencyDto: CreateAgencyRequestDto,
@@ -139,5 +148,6 @@ export class AdminController {
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.DELETE_AGENCY);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.GET_ADMIN);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_GET_ROLE_BY_ID);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.CREATE_SUPER_ADMIN);
     }
 }
