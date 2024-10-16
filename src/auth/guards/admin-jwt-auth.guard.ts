@@ -13,6 +13,7 @@ import { ADMIN_ACCOUNT_STATUS } from 'src/enums/admin.account.status.enum';
 import { AdminJWTPayload } from 'src/interface/admin-jwt-payload';
 import { JWT_SECRET_ADMIN } from 'src/utils/constants';
 import { SERVICE_TYPES } from 'src/enums/service-types.enum';
+import { EVENT_TOPICS } from 'src/enums/event-topics.enum';
 
 @Injectable()
 export class AdminJwtAuthGuard implements CanActivate {
@@ -40,21 +41,14 @@ export class AdminJwtAuthGuard implements CanActivate {
                 },
             );
 
-            const admin = await this.adminClient
-                .send('get_user', new AuthPayload(payload.sub))
+            const adminRole = await this.adminClient
+                .send(EVENT_TOPICS.ADMIN_GET_ROLE_BY_ID, new AuthPayload(payload.role))
                 .toPromise()
                 .catch(err => err);
-
-            if (!admin) {
+            
+            if (!adminRole) {
                 throw new UnauthorizedException('Admin not found');
             }
-
-            // if (
-            //     admin.status === ADMIN_ACCOUNT_STATUS.BLOCKED ||
-            //     admin.status === ADMIN_ACCOUNT_STATUS.INACTIVE
-            // ) {
-            //     throw new UnauthorizedException('Admin blocked');
-            // }
 
             const checkPermission = this.reflector.get<PERMISSION[]>(
                 'permission-check',
@@ -62,8 +56,7 @@ export class AdminJwtAuthGuard implements CanActivate {
             );
 
             if (checkPermission) {
-                console.log('getting inside of it');
-                const assignPermission = admin.role.permissions;
+                const assignPermission = adminRole.permissions;
                 const accessable_api_modules = this.reflector.get<PERMISSION[]>(
                     'permissions',
                     context.getHandler(),
@@ -77,8 +70,7 @@ export class AdminJwtAuthGuard implements CanActivate {
                     throw new UnauthorizedException('Permission denied');
                 }
             }
-            request.admin = admin;
-            request.id = String(admin._id);
+            request.admin = { id: payload.id, email: payload.email, role: payload.role };
         } catch (e) {
             console.log(e);
             throw new UnauthorizedException();

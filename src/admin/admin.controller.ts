@@ -137,5 +137,7 @@ export class AdminController {
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.CREATE_AGENCY);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.UPDATE_AGENCY);
         this.adminClient.subscribeToResponseOf(EVENT_TOPICS.DELETE_AGENCY);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.GET_ADMIN);
+        this.adminClient.subscribeToResponseOf(EVENT_TOPICS.ADMIN_GET_ROLE_BY_ID);
     }
 }
