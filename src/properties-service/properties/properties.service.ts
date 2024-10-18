@@ -57,6 +57,17 @@ export class PropertiesService {
     }
   }
 
+  async getPropertiesById(id: string) {
+    try {
+      const responseProperties = this.propertiesClient
+        .send(KAFKA_PROPERTIES_TOPIC.get_property_by_id, { id: id })
+        .toPromise();
+      return responseProperties;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async deletePropertyFromList(id: string) {
     try {
       const responseProperties = this.propertiesClient

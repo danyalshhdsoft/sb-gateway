@@ -193,6 +193,20 @@ export class PropertiesController implements OnModuleInit {
     }
   }
 
+  @Get('get-property-by-id/:id')
+  async getPropertiesById(@Res() res: Response, @Param('id') id: string) {
+    try {
+      const result = await this.propertiesService.getPropertiesById(id);
+      const data = {
+        message: result.message,
+        data: result.data,
+      };
+      return res.status(result.status).send(data);
+    } catch (oError) {
+      catchException(oError);
+    }
+  }
+
   @Delete(':id')
   async deletePropertyFromList(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -295,6 +309,9 @@ export class PropertiesController implements OnModuleInit {
     );
     this.propertiesClient.subscribeToResponseOf(
       KAFKA_ELASTIC_SEARCH_TOPIC.search,
+    );
+    this.propertiesClient.subscribeToResponseOf(
+      KAFKA_PROPERTIES_TOPIC.get_property_by_id,
     );
     this.uploadsClient.subscribeToResponseOf(
       KAFKA_FILE_UPLOADS_TOPIC.upload_files,

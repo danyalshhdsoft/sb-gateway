@@ -28,6 +28,7 @@ export const KAFKA_PROPERTIES_TOPIC = {
   retrieve_properties: 'retrieve_properties',
   delete_properties: 'delete_properties',
   update_property_status: 'update_property_status',
+  get_property_by_id: 'get_property_by_id',
 };
 
 export const KAFKA_LOCATIONS_TOPIC = {
