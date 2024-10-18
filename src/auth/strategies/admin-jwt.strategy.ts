@@ -29,19 +29,20 @@ export class AdminJwtStrategy extends PassportStrategy(Strategy, 'admin-jwt') {
     });
   }
 
-  async validate(payload: JwtPayload) {
-    const user = await this.adminClient
-        .send(EVENT_TOPICS.GET_ADMIN, new AuthPayload(payload.sub))
-        .toPromise()
-        .catch(err => err);
+  // async validate(payload: JwtPayload) {
+  //   console.log("utube");
+  //   const user = await this.adminClient
+  //       .send(EVENT_TOPICS.GET_ADMIN, new AuthPayload(payload.sub))
+  //       .toPromise()
+  //       .catch(err => err);
 
-    if (!user) throw new UnauthorizedException('Please log in to continue');
+  //   if (!user) throw new UnauthorizedException('Please log in to continue');
 
-    return {
-      id: payload.sub,
-      email: payload.email,
-      role: payload.role,
-      isSuperAdmin: payload.isSuperAdmin
-    };
-  }
+  //   return {
+  //     id: payload.sub,
+  //     email: payload.email,
+  //     role: payload.role,
+  //     isSuperAdmin: payload.isSuperAdmin
+  //   };
+  // }
 }

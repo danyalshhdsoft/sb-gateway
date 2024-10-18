@@ -3,6 +3,7 @@ import { ClientKafka, RpcException } from '@nestjs/microservices';
 import { AdminSignupDto } from 'src/dto/admin/admin.auth.dto';
 import { CreateAgencyRequestDto, RegisterAgencyRequestDto } from 'src/dto/admin/agency.dto';
 import { IsIdDTO } from 'src/dto/admin/id.dto';
+import { CreateAdminRequest } from 'src/dto/admin/requests/create-admin-request.dto';
 import { CreateAdminRoleRequest } from 'src/dto/admin/requests/create-admin-role-request.dto';
 import { CreateAgencyRequest } from 'src/dto/admin/requests/create-agency-request.dto';
 import { CreateSuperAdminRequest } from 'src/dto/admin/requests/create-super-admin-request.dto';
@@ -84,13 +85,26 @@ export class AdminService {
 
     async createSuperAdmin(createAgencyDto: AdminSignupDto) {
         return await this.adminClient
-            .send(EVENT_TOPICS.CREATE_AGENCY, new CreateSuperAdminRequest(
+            .send(EVENT_TOPICS.CREATE_SUPER_ADMIN, new CreateSuperAdminRequest(
                 createAgencyDto.email,
                 createAgencyDto.password,
                 createAgencyDto.firstName,
                 createAgencyDto.lastName,
                 createAgencyDto.isSuperAdmin,
                 createAgencyDto.role
+            )).toPromise()
+            .catch(err => err);
+    }
+
+    async createAdmin(createAdminDto: AdminSignupDto) {
+        return await this.adminClient
+            .send(EVENT_TOPICS.CREATE_SUPER_ADMIN, new CreateAdminRequest(
+                createAdminDto.email,
+                createAdminDto.password,
+                createAdminDto.firstName,
+                createAdminDto.lastName,
+                createAdminDto.isSuperAdmin,
+                createAdminDto.role
             )).toPromise()
             .catch(err => err);
     }
