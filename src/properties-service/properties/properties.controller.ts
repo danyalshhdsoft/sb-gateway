@@ -12,6 +12,8 @@ import {
   UseInterceptors,
   UploadedFiles,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 
@@ -22,10 +24,12 @@ import {
   KAFKA_FILE_UPLOADS_TOPIC,
   KAFKA_PROPERTIES_TOPIC,
 } from 'src/utils/constants/kafka-const';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { catchException } from 'src/utils/helper/handle.exceptionh.helper';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { BroadcastUploadsService } from './broadcast-uploads.service';
+import { AdminJwtAuthGuard } from 'src/auth/guards/admin-jwt-auth.guard';
+import { AdminJWTPayload } from 'src/interface/admin-jwt-payload';
 @Controller('properties')
 export class PropertiesController implements OnModuleInit {
   constructor(
@@ -174,9 +178,11 @@ export class PropertiesController implements OnModuleInit {
   }
 
   @Get()
-  async getAllPropertyLists(@Res() res: Response) {
+  @UseGuards(AdminJwtAuthGuard)
+  async getAllPropertyLists(@Res() res: Response, @Req() req: Request) {
     try {
-      const result = await this.propertiesService.getAllPropertyLists();
+      const admin: AdminJWTPayload = req['admin'];
+      const result = await this.propertiesService.getAllPropertyLists(admin);
       const data = {
         message: result.message,
         data: result.data,

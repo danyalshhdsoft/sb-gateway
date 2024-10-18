@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientKafka, RpcException } from '@nestjs/microservices';
 import { SearchPropertiesQueryRequest } from 'src/dto/properties/requests/search-properties-query-request.dto';
+import { AdminJWTPayload } from 'src/interface/admin-jwt-payload';
 import {
   CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
   KAFKA_ELASTIC_SEARCH_TOPIC,
@@ -45,10 +46,10 @@ export class PropertiesService {
     }
   }
 
-  async getAllPropertyLists() {
+  async getAllPropertyLists(admin: AdminJWTPayload) {
     try {
       const responseProperties = this.propertiesClient
-        .send(KAFKA_PROPERTIES_TOPIC.retrieve_properties, {})
+        .send(KAFKA_PROPERTIES_TOPIC.retrieve_properties, { admin })
         .toPromise();
       return responseProperties;
     } catch (e) {
