@@ -58,7 +58,7 @@ jobs:
       # Step 4: Copy the application to the server and deploy using SSH
       - name: Deploy to server
         run: | 
-          ssh danyalshhdsoft@34.18.95.48 "sudo su && cd /home/danyalshhdsoft/sb-gateway && git pull origin master && npm i && pm2 restartall"
+          ssh danyalshhdsoft@34.18.95.48 "sudo su && cd /home/danyalshhdsoft/sb-gateway && git pull origin master && npm i && pm2 restart all"
         # uses: appleboy/ssh-action@v0.1.7
         # with:
         #   host: ${{ secrets.SERVER_HOST }}         # Set the host in GitHub Secrets
