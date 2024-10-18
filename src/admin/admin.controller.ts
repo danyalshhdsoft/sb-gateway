@@ -13,6 +13,9 @@ import { CreateRoleDto } from 'src/dto/admin/create-role.dto';
 import { AdminJwtAuthGuard } from 'src/auth/guards/admin-jwt-auth.guard';
 import { EVENT_TOPICS } from 'src/enums/event-topics.enum';
 import { CreateAgencyRequestDto } from 'src/dto/admin/agency.dto';
+import { Permissions } from '../auth/decorators/permissions';
+import { ACTION, PERMISSION_MODULE } from 'src/enums/permission';
+import { CreateAdminDto } from 'src/dto/admin/create-admin.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -107,12 +110,28 @@ export class AdminController {
       return new ApiResponse(role, 'Role created successfully!');
     }
   
+    
+    @Permissions([
+        {
+          module: PERMISSION_MODULE.USERS,
+          action: [ACTION.ALL],
+        }
+      ])
+    @UseGuards(AdminJwtAuthGuard)
     @Get('role')
     async getRoles(
         @Query('page') page: string,
         @Query('limit') limit: string,
     ) {
       return this.adminService.getRoles(page, limit);
+    }
+
+    @UseGuards(AdminJwtAuthGuard)
+    @Post('create')
+    async createAdmin(
+        @Body() createAdminDto: CreateAdminDto
+    ) {
+      return this.adminService.createAdmin(createAdminDto);
     }
 
     // @Post('add-agency')

@@ -40,8 +40,8 @@ export class AdminJwtAuthGuard implements CanActivate {
                     secret: this.configService.get<string>(JWT_SECRET_ADMIN),
                 },
             );
-
-            if (!payload.isSuperAdmin) {
+            
+            if (payload.isSuperAdmin) {
                 request.admin = { id: payload.id, email: payload.email, role: payload.role };
                 return true;
             }
@@ -49,7 +49,7 @@ export class AdminJwtAuthGuard implements CanActivate {
                 .send(EVENT_TOPICS.ADMIN_GET_ROLE_BY_ID, new AuthPayload(payload.role))
                 .toPromise()
                 .catch(err => err);
-            
+
             if (!adminRole) {
                 throw new UnauthorizedException('Admin not found');
             }
