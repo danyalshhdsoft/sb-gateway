@@ -57,20 +57,18 @@ jobs:
 
       # Step 4: Copy the application to the server and deploy using SSH
       - name: Deploy to server
-        run: | 
-          ssh danyalshhdsoft@34.18.95.48 "sudo su && cd /home/danyalshhdsoft/sb-gateway && git pull origin master && npm i && pm2 restart all"
-        # uses: appleboy/ssh-action@v0.1.7
-        # with:
-        #   host: ${{ secrets.SERVER_HOST }}         # Set the host in GitHub Secrets
-        #   username: ${{ secrets.SERVER_USER }}     # Set the user in GitHub Secrets
-        #   key: ${{ secrets.SERVER_SSH_KEY }}       # Set the private SSH key in GitHub Secrets
-        #   port: 22                                 # Default SSH port
-        #   script: |
-        #     cd /home/danyalshhdsoft/sb-gateway
-        #     git pull origin master
-        #     npm install
-        #     npm run build
-        #     pm2 restart all
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}         # Set the host in GitHub Secrets
+          username: ${{ secrets.SERVER_USER }}     # Set the user in GitHub Secrets
+          key: ${{ secrets.SERVER_SSH_KEY }}       # Set the private SSH key in GitHub Secrets
+          port: 22                                 # Default SSH port
+          script: |
+            cd /home/danyalshhdsoft/sb-gateway
+            git pull origin master
+            npm install
+            npm run build
+            pm2 restart all
 
       # Optional Step: Restart PM2 to pick up new changes
       - name: PM2 restart
